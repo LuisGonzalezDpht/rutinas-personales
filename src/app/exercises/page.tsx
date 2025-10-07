@@ -1,10 +1,10 @@
 import HeaderPage from "@/components/HeaderPage";
 import NoAuth from "@/components/NoAuth";
 
-export default function Home() {
+export default function Exercises() {
   return (
     <div>
-      <HeaderPage title="Home" subtitle="Welcome to the Tracker" />
+      <HeaderPage title="Exercises" subtitle="Manage your exercises" />
       <div className="p-2">
         <NoAuth>
           <div>estas logueado</div>
