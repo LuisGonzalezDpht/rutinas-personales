@@ -30,6 +30,7 @@ export interface SessionResponse {
 }
 
 export interface UserResponse {
+  id: string;
   email: string;
   username: string;
   createdAt: Date;

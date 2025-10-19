@@ -17,6 +17,11 @@ import { Plus, X } from "lucide-react";
 import React from "react";
 import AddExercise from "./AddExercise";
 import { ExercisesAdded } from "@/shared/types/ExercisesAdded";
+import { routineRequest } from "@/utils/entities/routineModel";
+import RpcCreateRoutine from "@/utils/supabase/rpc/routines";
+import ApiGetUser from "@/utils/supabase/api/user";
+import useAuth from "@/store/auth";
+import { toast } from "sonner";
 
 export default function CreateRoutine({
   mode = "create",
@@ -25,11 +30,43 @@ export default function CreateRoutine({
 }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
+  const [routineName, setRoutineName] = React.useState("");
   const [daySelected, setDaySelected] = React.useState(new Set(["monday"]));
   const [exercises, setExercises] = React.useState<ExercisesAdded[]>([]);
 
-  function helloWorld() {
-    console.log("Hello World!");
+  const auth = useAuth();
+
+  async function addRoutine() {
+    if (exercises.length === 0) return;
+    if (!routineName && daySelected.size === 0) return;
+
+    const id_user = await ApiGetUser(auth.sessionData?.user.email || "");
+
+    const responseData: routineRequest = {
+      p_name: routineName,
+      p_day_of_week: Array.from(daySelected)[0],
+      p_user_id: id_user.id,
+      p_exercises: exercises.map((exercise) => ({
+        name: exercise.name,
+        muscle_group: exercise.muscleGroup,
+        sets: exercise.sets,
+        reps: exercise.reps,
+        description: exercise.description || "",
+      })),
+    };
+
+    const response = await RpcCreateRoutine(responseData);
+
+    if (response.code === 200) {
+      toast.success("Routine created successfully");
+    } else {
+      toast.error(response.message);
+    }
+
+    setRoutineName("");
+    setDaySelected(new Set());
+    setExercises([]);
+
     onClose();
   }
 
@@ -73,7 +110,7 @@ export default function CreateRoutine({
   ));
 
   const ExercisesListContainer = (
-    <div className="w-full bg-neutral-800 rounded-lg text-center max-h-[250px] overflow-auto">
+    <div className="w-full bg-neutral-800 rounded-lg text-center max-h-[250px] overflow-auto transition-all duration-200">
       {isRoutineValid ? (
         ExercisesList
       ) : (
@@ -118,6 +155,8 @@ export default function CreateRoutine({
                     placeholder="e.g., Push Day, Pull Day, Leg Day"
                     labelPlacement="outside"
                     size="sm"
+                    value={routineName}
+                    onValueChange={setRoutineName}
                   ></Input>
                   <Select
                     label="Day of Week"
@@ -150,7 +189,7 @@ export default function CreateRoutine({
                 <Button size="sm" onPress={onClose}>
                   Close
                 </Button>
-                <Button size="sm" onPress={helloWorld} color="primary">
+                <Button size="sm" onPress={addRoutine} color="primary">
                   {mode === "create" ? "Create" : "Save"}
                 </Button>
               </ModalFooter>

@@ -6,6 +6,7 @@ import RootProvider from "@/context/RootProvider";
 import useAuth from "@/store/auth";
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -61,6 +62,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="dark">
       <body>
+        <Toaster />
         <HeroUIProvider>
           <RootProvider>{children}</RootProvider>
         </HeroUIProvider>

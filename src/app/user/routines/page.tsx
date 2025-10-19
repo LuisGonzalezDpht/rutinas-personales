@@ -1,21 +1,77 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import CreateRoutine from "@/components/CreateRoutine";
 import HeaderPage from "@/components/HeaderPage";
 import NoAuth from "@/components/NoAuth";
+import { RpcGetRoutines } from "@/utils/supabase/rpc/routines";
 import useAuth from "@/store/auth";
+import { routineReponse } from "@/utils/entities/routineModel";
+import { Calendar, Dumbbell, MoreVertical } from "lucide-react";
+import { Button } from "@heroui/react";
 
 export default function Routines() {
   const auth = useAuth();
+  const [routines, setRoutines] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!auth.sessionData?.user.id) return;
+
+    const fetchData = async () => {
+      try {
+        const data = await RpcGetRoutines(auth.sessionData?.user.id || "");
+        setRoutines(Array.isArray(data) ? data : []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [auth.sessionData?.user.id]);
 
   return (
     <div>
       <HeaderPage title="Routines" subtitle="Manage your routines">
         {auth.isAuthenticated && <CreateRoutine />}
       </HeaderPage>
-      <div className="p-2">
+      <div className="w-full p-10 flex flex-wrap gap-5">
         <NoAuth>
-          <div>estas logueado</div>
+          {loading ? (
+            <div>cargando...</div>
+          ) : (
+            <>
+              {routines.map((m: routineReponse) => {
+                return (
+                  <div className="border border-neutral-700 p-5 rounded-lg flex flex-col gap-y-5 max-w-sm w-full">
+                    <div className="text-white text-lg font-bold flex items-center justify-between gap-x-2">
+                      <div>
+                        <Calendar className="inline-block w-auto h-4 text-neutral-400" />
+                        <span className="bg-neutral-800 px-2 rounded-md capitalize text-xs">
+                          {m.day_of_week}
+                        </span>
+                      </div>
+                      <div>
+                        <Button variant="flat" isIconOnly>
+                          <MoreVertical className="w-auto h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="text-white text-sm font-medium space-y-5">
+                      <h2 className="text-lg font-bold text-nowrap whitespace-nowrap text-ellipsis">
+                        {m.name}
+                      </h2>
+                      <p className="gap-x-3 flex items-center">
+                        <Dumbbell className="inline-block w-auto h-4 text-neutral-400" />
+                        <span className="text-neutral-400">
+                          {m.exercises.length} exercises
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          )}
         </NoAuth>
       </div>
     </div>

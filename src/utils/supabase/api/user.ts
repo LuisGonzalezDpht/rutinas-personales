@@ -6,7 +6,7 @@ export default async function ApiGetUser(email: string): Promise<UserResponse> {
 
   const { data: userData, error } = await supabase
     .from("users")
-    .select("username, email, created_at, updated_at")
+    .select("id, username, email, created_at, updated_at")
     .eq("email", email);
 
   if (error) {

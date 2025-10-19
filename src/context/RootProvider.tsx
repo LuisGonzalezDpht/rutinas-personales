@@ -23,7 +23,7 @@ export default function RootProvider({
   return auth.isAuthenticated ? (
     <Wrapper>
       <SideBar />
-      <div>
+      <div className="h-screen overflow-auto">
         {children}
         <Footer />
       </div>

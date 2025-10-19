@@ -61,7 +61,7 @@ export default function SideBar() {
   }
 
   const navClass =
-    "w-full border-r border-r-neutral-700 min-h-screen flex flex-col justify-between transition-all duration-200 ease-in-out";
+    "w-full border-r border-r-neutral-700 h-screen flex flex-col justify-between transition-all duration-200 ease-in-out";
 
   return (
     auth.isAuthenticated && (
@@ -71,35 +71,36 @@ export default function SideBar() {
         } ${navClass}`}
       >
         <div className="py-3 px-2 border-b border-b-neutral-700 w-full">
-          <h1 className="text-lg font-bold flex justify-center items-center w-full gap-x-3">
-            <PanelLeftClose
-              className="h-8 w-full bg-secondary hover:bg-secondary-300 cursor-pointer text-black rounded-lg p-0.5"
-              onClick={() => settings.setSidebarExpand(!settings.sidebarExpand)}
-            />
+          <h1
+            onClick={() => settings.setSidebarExpand(!settings.sidebarExpand)}
+            className="text-lg font-bold flex justify-center items-center w-full gap-x-3 bg-warning hover:bg-warning-300 cursor-pointer text-black rounded-lg p-0.5 transition-all duration-200 ease-in-out"
+          >
+            <PanelLeftClose className="h-7 w-auto" />
+            {settings.sidebarExpand && (
+              <span className="text-lg font-medium text-nowrap">
+                Rutinas Personales
+              </span>
+            )}
           </h1>
         </div>
-        <ul className="h-full space-y-0.5 ">
+        <ul className="h-full space-y-2 p-1">
           {items.map(
             (item) =>
               auth.isAuthenticated === item.auth && (
                 <li key={item.label}>
-                  <div
-                    className={`w-full flex items-center gap-x-2 px-2 py-3  hover:bg-neutral-900 cursor-pointer transition-all duration-200 ease-in-out ${
-                      item.to === pathname
-                        ? "text-neutral-500 bg-neutral-900 font-bold"
-                        : ""
-                    } ${
-                      settings.sidebarExpand
-                        ? "max-w-64"
-                        : "max-w-15 justify-center"
-                    }`}
-                    onClick={() => goto(item.to)}
+                  <Button
+                    className="w-full"
+                    color={item.to === pathname ? "warning" : "default"}
+                    variant="faded"
+                    size="sm"
+                    isIconOnly={!settings.sidebarExpand}
+                    onPress={() => goto(item.to)}
                   >
-                    <item.icon className="h-6 w-auto" />{" "}
+                    <item.icon className="h-4 w-auto" />{" "}
                     {settings.sidebarExpand && (
                       <span className="text-lg font-medium">{item.label}</span>
                     )}
-                  </div>
+                  </Button>
                 </li>
               )
           )}

@@ -12,3 +12,5 @@ export const daysOfWeek: days[] = [
   { name: "Saturday", value: "saturday" },
   { name: "Sunday", value: "sunday" },
 ];
+
+export type dayOfWeek = days["name"];
