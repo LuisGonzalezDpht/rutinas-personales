@@ -4,9 +4,13 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // Layout de login / recover
-  if (pathname === "/recover" || pathname === "/auth/login") {
+  if (pathname === "/auth/recover" || pathname === "/auth/login") {
     return (
-      <main className="min-h-screen w-full flex items-center justify-center background">
+      <main
+        className={`${
+          pathname === "/auth/recover" ? "background-2" : "background"
+        } min-h-screen w-full flex items-center justify-center `}
+      >
         {children}
       </main>
     );

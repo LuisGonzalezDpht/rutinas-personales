@@ -16,33 +16,26 @@ export default function RootLayout({
   const auth = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-
-  // Espera a que zustand persist termine de hidratar
   const [hydrated, setHydrated] = React.useState(false);
+
+  // Espera la hidratación de Zustand persist
   React.useEffect(() => {
-    // establece estado inicial
-    setHydrated(useAuth.persist?.hasHydrated?.() ?? false);
-    // y luego escucha final de hidratación
-    const unsubFinish = useAuth.persist?.onFinishHydration?.(() => {
-      setHydrated(true);
-    });
-    return () => {
-      unsubFinish?.();
-    };
+    const unsub = useAuth.persist?.onFinishHydration?.(() => setHydrated(true));
+    if (useAuth.persist?.hasHydrated?.()) setHydrated(true);
+    return () => unsub?.();
   }, []);
 
+  // Manejo de rutas según autenticación
   React.useEffect(() => {
     if (!hydrated) return;
+
+    const isPublicRoute =
+      pathname.startsWith("/auth/") || pathname === "/recover";
 
     if (pathname === "/") {
       router.replace("/auth/login");
       return;
     }
-
-    const isPublicRoute =
-      pathname === "/auth/login" ||
-      pathname === "/recover" ||
-      pathname.startsWith("/auth/");
 
     if (
       !auth.isAuthenticated &&
@@ -53,11 +46,19 @@ export default function RootLayout({
       return;
     }
 
-    // Si está autenticado y está en la pantalla de login, llévalo al home
     if (auth.isAuthenticated && pathname === "/auth/login") {
       router.replace("/user/home");
     }
-  }, [hydrated, auth.isAuthenticated, pathname, router]);
+  }, [hydrated, auth.isAuthenticated, pathname]);
+
+  // Evita parpadeo antes de hidratar Zustand
+  if (!hydrated) {
+    return (
+      <html lang="es" className="dark">
+        <body className="flex items-center justify-center h-screen text-neutral-400"></body>
+      </html>
+    );
+  }
 
   return (
     <html lang="es" className="dark">

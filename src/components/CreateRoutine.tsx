@@ -37,93 +37,106 @@ export default function CreateRoutine({
     new Set(["monday"])
   );
   const [exercises, setExercises] = React.useState<ExercisesAdded[]>([]);
+  const [loading, setLoading] = React.useState(false);
 
   const auth = useAuth();
 
+  const addExercise = React.useCallback(
+    (exercise: ExercisesAdded) => setExercises((prev) => [...prev, exercise]),
+    []
+  );
+
+  const removeExercise = React.useCallback(
+    (index: number) =>
+      setExercises((prev) => prev.filter((_, i) => i !== index)),
+    []
+  );
+
   async function addRoutine() {
-    if (exercises.length === 0) return;
-    if (!routineName && daySelected.size === 0) return;
-
-    const id_user = await ApiGetUser(auth.sessionData?.user.email || "");
-
-    const responseData: routineRequest = {
-      p_name: routineName,
-      p_day_of_week: Array.from(daySelected)[0],
-      p_user_id: id_user.id,
-      p_exercises: exercises.map((exercise) => ({
-        name: exercise.name,
-        muscle_group: exercise.muscleGroup,
-        sets: exercise.sets,
-        reps: exercise.reps,
-        description: exercise.description || "",
-      })),
-    };
-
-    const response = await RpcCreateRoutine(responseData);
-
-    if (response.code === 200) {
-      toast.success("Routine created successfully");
-    } else {
-      toast.error(response.message);
+    if (exercises.length === 0 || !routineName || daySelected.size === 0) {
+      toast.error("Please complete all fields before creating a routine");
+      return;
     }
 
+    try {
+      setLoading(true);
+
+      const id_user = await ApiGetUser(auth.sessionData?.user.email || "");
+
+      const requestData: routineRequest = {
+        p_name: routineName.trim(),
+        p_day_of_week: Array.from(daySelected)[0],
+        p_user_id: id_user.id,
+        p_exercises: exercises.map((exercise) => ({
+          name: exercise.name,
+          muscle_group: exercise.muscleGroup,
+          sets: exercise.sets,
+          reps: exercise.reps,
+          description: exercise.description || "",
+        })),
+      };
+
+      const response = await RpcCreateRoutine(requestData);
+
+      if (response.code === 200) {
+        toast.success("Routine created successfully");
+        onAdd();
+        resetForm();
+        onClose();
+      } else {
+        toast.error(response.message);
+      }
+    } catch (err) {
+      toast.error("An error occurred while creating the routine");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function resetForm() {
     setRoutineName("");
-    setDaySelected(new Set());
+    setDaySelected(new Set(["monday"]));
     setExercises([]);
-
-    onAdd();
-    onClose();
   }
 
-  function addExercise(exercise: ExercisesAdded) {
-    setExercises([...exercises, exercise]);
-  }
-
-  function removeExercise(index: number) {
-    setExercises(exercises.filter((_, i) => i !== index));
-  }
-
-  const isRoutineValid = exercises.length > 0;
-
-  const ExercisesList = exercises.map((exercise, index) => (
-    <div
-      key={index}
-      className={`flex flex-col items-start gap-y-2 relative p-4 transition-colors duration-200 group ${
-        index === exercises.length % 2
-          ? "bg-neutral-700 hover:bg-neutral-600"
-          : "bg-neutral-800 hover:bg-neutral-700"
-      }`}
-    >
-      <p className="text-xs font-medium text-neutral-400">
-        {exercise.name} ({exercise.muscleGroup})
-      </p>
-      <p className="text-xs font-normal text-neutral-200">
-        {exercise.sets} sets of {exercise.reps} reps
-      </p>
-      {exercise.description && (
-        <p className="text-xs font-normal text-neutral-300">
-          {exercise.description}
-        </p>
-      )}
-      <div
-        onClick={() => removeExercise(index)}
-        className="absolute top-1 right-1 group-hover:opacity-100 opacity-0 transition-opacity duration-200 cursor-pointer"
-      >
-        <X className="h-4 w-4" />
-      </div>
-    </div>
-  ));
-
-  const ExercisesListContainer = (
-    <div className="w-full bg-neutral-800 rounded-lg text-center max-h-[250px] overflow-auto transition-all duration-200">
-      {isRoutineValid ? (
-        ExercisesList
+  const ExercisesList = React.useMemo(
+    () =>
+      exercises.length > 0 ? (
+        exercises.map((exercise, index) => (
+          <div
+            key={index}
+            className={`flex flex-col items-start gap-y-2 relative p-4 transition-colors duration-200 group ${
+              index % 2 === 0
+                ? "bg-neutral-700 hover:bg-neutral-600"
+                : "bg-neutral-800 hover:bg-neutral-700"
+            }`}
+          >
+            <p className="text-xs font-medium text-neutral-400">
+              {exercise.name} ({exercise.muscleGroup})
+            </p>
+            <p className="text-xs font-normal text-neutral-200">
+              {exercise.sets} sets of {exercise.reps} reps
+            </p>
+            {exercise.description && (
+              <p className="text-xs font-normal text-neutral-300">
+                {exercise.description}
+              </p>
+            )}
+            <button
+              onClick={() => removeExercise(index)}
+              className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ))
       ) : (
-        <p className="text-xs p-4">
+        <p className="text-xs p-4 text-center">
           No exercises added yet. Click &quot;Add Exercise&quot; to get started.
         </p>
-      )}
-    </div>
+      ),
+    [exercises, removeExercise]
   );
 
   return (
@@ -137,6 +150,7 @@ export default function CreateRoutine({
         <Plus className="h-4 w-4" /> {mode === "create" ? "Create" : "Edit"} new
         routine
       </Button>
+
       <Modal isOpen={isOpen} size="sm" onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -146,13 +160,14 @@ export default function CreateRoutine({
                   <h1 className="text-lg font-bold">
                     {mode === "create" ? "Create" : "Edit"} Routine
                   </h1>
-                  <p className="text-xs font-normal text-neutral-400">
+                  <p className="text-xs text-neutral-400">
                     {mode === "create"
                       ? "Set up a new workout routine with exercises."
-                      : "Edit the routine with exercises."}
+                      : "Edit the existing routine and its exercises."}
                   </p>
                 </div>
               </ModalHeader>
+
               <ModalBody>
                 <div className="flex flex-col items-start gap-y-5">
                   <Input
@@ -162,47 +177,48 @@ export default function CreateRoutine({
                     size="sm"
                     value={routineName}
                     onValueChange={setRoutineName}
-                  ></Input>
+                  />
                   <Select
                     label="Day of Week"
-                    placeholder="Select days"
+                    placeholder="Select day"
                     labelPlacement="outside"
                     items={daysOfWeek}
-                    defaultSelectedKeys={["monday"]}
                     selectedKeys={daySelected}
-                    onSelectionChange={(keys) => {
-                      if (keys === "all") {
-                        setDaySelected(new Set(["monday"]));
-                      } else {
-                        setDaySelected(
-                          new Set(Array.from(keys).map((k) => String(k)))
-                        );
-                      }
-                    }}
+                    onSelectionChange={(keys) =>
+                      setDaySelected(
+                        new Set(Array.from(keys).map((k) => String(k)))
+                      )
+                    }
                     size="sm"
-                    className="max-w-1/2"
                   >
                     {(day) => (
                       <SelectItem key={day.value}>{day.name}</SelectItem>
                     )}
                   </Select>
+
                   <div className="py-3 w-full space-y-5">
                     <div className="w-full flex justify-between items-center">
                       <h5 className="text-sm font-bold">Exercises</h5>
-                      <AddExercise
-                        mode={mode}
-                        onAdd={addExercise}
-                      ></AddExercise>
+                      <AddExercise mode={mode} onAdd={addExercise} />
                     </div>
-                    {ExercisesListContainer}
+
+                    <div className="w-full bg-neutral-800 rounded-lg max-h-[250px] overflow-auto transition-all duration-200">
+                      {ExercisesList}
+                    </div>
                   </div>
                 </div>
               </ModalBody>
+
               <ModalFooter>
-                <Button size="sm" onPress={onClose}>
+                <Button size="sm" onPress={onClose} disabled={loading}>
                   Close
                 </Button>
-                <Button size="sm" onPress={addRoutine} color="primary">
+                <Button
+                  size="sm"
+                  onPress={addRoutine}
+                  color="primary"
+                  isLoading={loading}
+                >
                   {mode === "create" ? "Create" : "Save"}
                 </Button>
               </ModalFooter>

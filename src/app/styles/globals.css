@@ -50,3 +50,10 @@ html {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+.background-2 {
+  background-image: url("/background-2.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

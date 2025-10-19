@@ -6,81 +6,73 @@ import { getI18nText } from "@/utils/i18n";
 import { ApiSignUp } from "@/utils/supabase/api/auth";
 import {
   Button,
-  Form,
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@heroui/react";
 import React from "react";
-
-type SignUpErrors = {
-  username?: string;
-  email?: string;
-  phone?: string;
-  password?: string;
-};
+import { toast } from "sonner";
 
 export default function SignUp() {
   const settings = useSettings();
-
   const [password, setPassword] = React.useState("");
-  const [submitted, setSubmitted] = React.useState<SignUpErrors | null>(null);
-  const [errors, setErrors] = React.useState<SignUpErrors>({});
+  const [loading, setLoading] = React.useState(false);
+
+  const t = (key: string) => getI18nText(key, settings.language);
 
   const getPasswordError = (value: string) => {
-    if (value.length < 4) {
-      return getI18nText("signUp.error.length", settings.language);
-    }
-    // if ((value.match(/[A-Z]/g) || []).length < 1) {
-    //   return getI18nText("signUp.error.uppercase", settings.language);
-    // }
-    // if ((value.match(/[^a-z]/gi) || []).length < 1) {
-    //   return getI18nText("signUp.error.symbol", settings.language);
-    // }
-
+    if (value.length < 4) return t("signUp.error.length");
     return null;
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    const data = Object.fromEntries(new FormData(e.currentTarget)) as Record<
+      string,
+      string
+    >;
 
-    // Custom validation checks
-    const newErrors: SignUpErrors = {};
-
-    // Password validation
-    const passwordError = getPasswordError(data.password as string);
+    // Validaciones
+    if (!data.username || data.username === "admin") {
+      toast.error(t("signUp.error.name"));
+      return;
+    }
+    if (!data.email) {
+      toast.error(t("signUp.error.email"));
+      return;
+    }
+    if (!data.phone) {
+      toast.error(t("signUp.error.phone"));
+      return;
+    }
+    const passwordError = getPasswordError(data.password);
     if (passwordError) {
-      newErrors.password = passwordError;
-    }
-
-    // Username validation
-    if (data.username === "admin") {
-      newErrors.username = "Username 'admin' is not allowed";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+      toast.error(passwordError);
       return;
     }
 
-    // Clear errors and submit
-    setErrors({});
-
+    // Registro
     try {
+      setLoading(true);
       const payload: UsersSignUp = {
-        username: data.username as string,
-        email: data.email as string,
-        phone: data.phone as string,
-        password: data.password as string,
+        username: data.username,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
       };
 
       await ApiSignUp(payload);
-      setSubmitted(payload);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Error al registrarse";
-      setErrors({ email: message });
+
+      toast.success(t("signUp.success"));
+      e.currentTarget.reset();
+      setPassword("");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : t("signUp.error.general");
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,112 +80,66 @@ export default function SignUp() {
     <Popover placement="top" size="sm" backdrop="opaque">
       <PopoverTrigger>
         <Button size="sm" color="default" className="w-full" variant="flat">
-          {getI18nText("signUp.signUp", settings.language)}{" "}
+          {t("signUp.signUp")}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-2.5">
-        <h3 className="text-left w-full pb-4 text-lg font-bold text-white">
-          {getI18nText("signUp.signUp", settings.language)}
+
+      <PopoverContent className="p-3 w-[280px]">
+        <h3 className="text-left pb-3 text-lg font-bold text-white">
+          {t("signUp.signUp")}
         </h3>
-        <Form
-          validationErrors={errors}
-          onSubmit={onSubmit}
-          onReset={() => setSubmitted(null)}
-        >
-          <div className="flex flex-col gap-y-3 max-w-md">
-            <Input
-              isRequired
-              errorMessage={({ validationDetails }) => {
-                if (validationDetails.valueMissing) {
-                  return getI18nText("signUp.error.name", settings.language);
-                }
 
-                return (
-                  errors.username ||
-                  getI18nText("signUp.error.name", settings.language)
-                );
-              }}
-              label={getI18nText("signUp.name", settings.language)}
-              placeholder={getI18nText(
-                "signUp.placeholder.name",
-                settings.language
-              )}
-              labelPlacement="outside"
-              name="username"
-              size="sm"
-              type="text"
-            />
-            <Input
-              isRequired
-              errorMessage={({ validationDetails }) => {
-                if (validationDetails.valueMissing) {
-                  return getI18nText("signUp.error.email", settings.language);
-                }
+        <form onSubmit={onSubmit} className="flex flex-col gap-y-3">
+          <Input
+            isRequired
+            label={t("signUp.name")}
+            placeholder={t("signUp.placeholder.name")}
+            labelPlacement="outside"
+            name="username"
+            size="sm"
+          />
+          <Input
+            isRequired
+            label={t("signUp.email")}
+            placeholder={t("signUp.placeholder.email")}
+            labelPlacement="outside"
+            name="email"
+            size="sm"
+            type="email"
+          />
+          <Input
+            isRequired
+            label={t("signUp.phone")}
+            placeholder={t("signUp.placeholder.phone")}
+            labelPlacement="outside"
+            name="phone"
+            size="sm"
+            type="text"
+          />
+          <Input
+            isRequired
+            label={t("signUp.password")}
+            placeholder={t("signUp.placeholder.password")}
+            labelPlacement="outside"
+            name="password"
+            size="sm"
+            type="password"
+            value={password}
+            onValueChange={setPassword}
+            isInvalid={!!getPasswordError(password)}
+            errorMessage={getPasswordError(password) || ""}
+          />
 
-                return (
-                  errors.email ||
-                  getI18nText("signUp.error.email", settings.language)
-                );
-              }}
-              label={getI18nText("signUp.email", settings.language)}
-              placeholder={getI18nText(
-                "signUp.placeholder.email",
-                settings.language
-              )}
-              labelPlacement="outside"
-              name="email"
-              size="sm"
-              type="email"
-            />
-            <Input
-              isRequired
-              errorMessage={({ validationDetails }) => {
-                if (validationDetails.valueMissing) {
-                  return getI18nText("signUp.error.phone", settings.language);
-                }
-
-                return (
-                  errors.phone ||
-                  getI18nText("signUp.error.phone", settings.language)
-                );
-              }}
-              label={getI18nText("signUp.phone", settings.language)}
-              placeholder={getI18nText(
-                "signUp.placeholder.phone",
-                settings.language
-              )}
-              labelPlacement="outside"
-              name="phone"
-              size="sm"
-              type="text"
-            />
-            <Input
-              isRequired
-              errorMessage={getPasswordError(password)}
-              isInvalid={!!getPasswordError(password)}
-              label={getI18nText("signUp.password", settings.language)}
-              placeholder={getI18nText(
-                "signUp.placeholder.password",
-                settings.language
-              )}
-              labelPlacement="outside"
-              name="password"
-              size="sm"
-              value={password}
-              onValueChange={setPassword}
-              type="password"
-            />
-            <Button size="sm" className="w-full" color="success" type="submit">
-              {getI18nText("signUp.signUp", settings.language)}
-            </Button>
-          </div>
-
-          {submitted && (
-            <div className="text-green-400 font-bold text-center w-full text-xs">
-              {getI18nText("signUp.success", settings.language)}
-            </div>
-          )}
-        </Form>
+          <Button
+            size="sm"
+            className="w-full mt-2"
+            color="success"
+            type="submit"
+            isLoading={loading}
+          >
+            {t("signUp.signUp")}
+          </Button>
+        </form>
       </PopoverContent>
     </Popover>
   );

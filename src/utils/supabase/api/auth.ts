@@ -6,11 +6,13 @@ import {
 import { createClient } from "@/utils/supabase/client";
 import ApiGetUser from "./user";
 
+/**
+ * Valida si hay sesión activa según la preferencia remember_me.
+ */
 export async function ApiValidateLogin(): Promise<UserLoginResponse | null> {
-  // Read remember-me preference to decide storage
   const rememberPref =
-    typeof globalThis !== "undefined" && globalThis.localStorage
-      ? globalThis.localStorage.getItem("remember_me")
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("remember_me")
       : null;
   const useLocal = rememberPref === "1";
 
@@ -20,18 +22,11 @@ export async function ApiValidateLogin(): Promise<UserLoginResponse | null> {
     autoRefreshToken: true,
   });
 
-  const { data, error } = await supabase.auth.getSession();
-  if (error) {
-    console.error(error);
-    return null;
-  }
+  const { data } = await supabase.auth.getSession();
   const session = data.session;
-  if (!session || !session.user?.email) {
-    return null;
-  }
+  if (!session?.user?.email) return null;
 
   const userData = await ApiGetUser(session.user.email);
-
   return {
     user: userData,
     session: {
@@ -44,13 +39,15 @@ export async function ApiValidateLogin(): Promise<UserLoginResponse | null> {
   };
 }
 
+/**
+ * Inicia sesión en Supabase y guarda la preferencia de recordarme.
+ */
 export async function ApiLogIn(
   { email, password }: UsersLogin,
   rememberMe?: boolean
 ): Promise<UserLoginResponse> {
-  if (!email || !password) {
-    throw new Error("Email and password are required");
-  }
+  if (!email || !password) throw new Error("Email and password are required");
+
   const supabase = createClient({
     storage: rememberMe ? "local" : "session",
     persistSession: true,
@@ -58,29 +55,19 @@ export async function ApiLogIn(
   });
 
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password,
+    email,
+    password,
   });
+  if (error) throw error;
 
-  if (error) {
-    throw error;
+  // Guarda preferencia de recordarme
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem("remember_me", rememberMe ? "1" : "0");
   }
-
-  if (typeof globalThis !== "undefined" && globalThis.localStorage) {
-    globalThis.localStorage.setItem("remember_me", rememberMe ? "1" : "0");
-  }
-
-  await supabase.auth.setSession({
-    access_token: data.session.access_token,
-    refresh_token: data.session.refresh_token,
-  });
-
-  await supabase.auth.getSession();
 
   const userEmail = data.user?.email;
-  if (!userEmail) {
-    throw new Error("Missing user email after login");
-  }
+  if (!userEmail) throw new Error("Missing user email after login");
+
   const userData = await ApiGetUser(userEmail);
 
   return {
@@ -95,31 +82,31 @@ export async function ApiLogIn(
   };
 }
 
+/**
+ * Registra un nuevo usuario en Supabase.
+ */
 export async function ApiSignUp(user: UsersSignUp) {
-  const supabase = createClient();
-
   const { email, password, username, phone } = user;
-  if (!email || !password) {
-    throw new Error("Email and password are required");
-  }
+  if (!email || !password) throw new Error("Email and password are required");
 
+  const supabase = createClient();
   const metadata: Record<string, string> = {};
   if (username) metadata.username = username;
   if (phone) metadata.phone = phone;
 
-  const { data: signUpData, error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: metadata },
   });
-  if (error) {
-    throw error;
-  }
-  return signUpData;
+  if (error) throw error;
+  return data;
 }
 
+/**
+ * Cierra sesión y limpia todas las sesiones persistentes.
+ */
 export async function ApiLogOut() {
-  // Try to sign out from both storage backends to ensure tokens are revoked
   const supabaseLocal = createClient({
     storage: "local",
     persistSession: true,
@@ -131,35 +118,21 @@ export async function ApiLogOut() {
     autoRefreshToken: true,
   });
 
-  try {
-    await supabaseLocal.auth.signOut();
-  } catch (e) {
-    console.warn("signOut (local) failed", e);
-  }
-  try {
-    await supabaseSession.auth.signOut();
-  } catch (e) {
-    console.warn("signOut (session) failed", e);
-  }
+  await Promise.allSettled([
+    supabaseLocal.auth.signOut(),
+    supabaseSession.auth.signOut(),
+  ]);
 
-  // Proactively clear stored tokens and remember-me to avoid auto re-login
   if (typeof window !== "undefined") {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (supabaseUrl) {
-      const key = `sb-${supabaseUrl.replace(/^https?:\/\//, "")}-auth-token`;
-      try {
-        window.localStorage?.removeItem(key);
-      } catch {}
-      try {
-        window.sessionStorage?.removeItem(key);
-      } catch {}
-    }
     try {
-      window.localStorage?.removeItem("remember_me");
+      window.localStorage.removeItem("remember_me");
     } catch {}
   }
 }
 
+/**
+ * Envía correo de recuperación de contraseña.
+ */
 export async function ApiRecoverPassword(
   email: string,
   redirectTo?: string
@@ -167,63 +140,54 @@ export async function ApiRecoverPassword(
   try {
     const supabase = createClient();
 
-    const response = await ApiGetUser(email);
-    if (!response) {
-      return { message: "Email not found", success: false };
-    }
+    const baseUrl =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : process.env.NEXT_PUBLIC_APP_URL ?? "";
 
-    const url = redirectTo ?? `${process.env.NEXT_PUBLIC_SITE_URL}/recover`;
+    const url = redirectTo ?? `${baseUrl}/auth/recover`;
 
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: url,
     });
-    if (data) {
-      return { message: "Password recovery email sent", success: true };
-    }
 
-    if (error) {
-      return { message: error.message, success: false };
-    }
+    if (error) return { message: error.message, success: false };
+
     return { message: "Password recovery email sent", success: true };
-  } catch {
+  } catch (err) {
+    console.error(err);
     return { message: "Error recovering password", success: false };
   }
 }
 
+/**
+ * Restablece la contraseña del usuario usando código OTP recibido por correo.
+ */
 export async function ApiResetPassword(
   code: string,
   email: string,
   password: string
 ): Promise<{ message: string; success: boolean }> {
   try {
+    if (!code) return { message: "Code is required", success: false };
+
     const supabase = createClient();
 
-    if (!code) {
-      return { message: "Code is required", success: false };
-    }
-
-    const responseCode = await supabase.auth.verifyOtp({
-      email: email,
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+      email,
       token: code,
       type: "recovery",
     });
+    if (verifyError) return { message: verifyError.message, success: false };
 
-    if (responseCode.error) {
-      return { message: responseCode.error.message, success: false };
-    }
-
-    const { data, error } = await supabase.auth.updateUser({
-      password: password,
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
     });
-    if (data) {
-      return { message: "Password reset successfully", success: true };
-    }
+    if (updateError) return { message: updateError.message, success: false };
 
-    if (error) {
-      return { message: error.message, success: false };
-    }
     return { message: "Password reset successfully", success: true };
-  } catch {
+  } catch (err) {
+    console.error(err);
     return { message: "Error resetting password", success: false };
   }
 }

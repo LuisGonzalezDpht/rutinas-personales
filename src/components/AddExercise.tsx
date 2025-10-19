@@ -2,7 +2,6 @@
 
 import { muscleGroups } from "@/shared/constants/MuscleGroup";
 import { ExercisesAdded } from "@/shared/types/ExercisesAdded";
-
 import {
   Button,
   Input,
@@ -19,6 +18,7 @@ import {
 } from "@heroui/react";
 import { PlusIcon } from "lucide-react";
 import React from "react";
+import { toast } from "sonner";
 
 export default function AddExercise({
   mode = "create",
@@ -30,87 +30,84 @@ export default function AddExercise({
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const [exerciseName, setExerciseName] = React.useState("");
-  const [muscleGroup, setMuscleGroup] = React.useState<Set<string>>(new Set([]));
+  const [muscleGroup, setMuscleGroup] = React.useState<Set<string>>(new Set());
   const [sets, setSets] = React.useState(1);
   const [reps, setReps] = React.useState(1);
   const [description, setDescription] = React.useState("");
 
-  const [errors, setErrors] = React.useState({
-    exerciseName: "",
-    muscleGroup: "",
-    sets: "",
-    reps: "",
-  });
+  const handleMuscleGroupChange = React.useCallback(
+    (keys: "all" | Set<React.Key>) => {
+      if (keys === "all") {
+        setMuscleGroup(new Set());
+      } else {
+        setMuscleGroup(new Set(Array.from(keys).map((k) => String(k))));
+      }
+    },
+    []
+  );
 
-  const handleMuscleGroupChange = (keys: "all" | Set<React.Key>) => {
-    if (keys === "all") {
-      setMuscleGroup(new Set([]));
-    } else {
-      setMuscleGroup(new Set(Array.from(keys).map((k) => String(k))));
-    }
-  };
-
-  function validateForm() {
-    let isValid = true;
-    if (!exerciseName) {
-      setErrors({ ...errors, exerciseName: "Exercise name is required" });
-      isValid = false;
-    } else {
-      setErrors({ ...errors, exerciseName: "" });
-    }
-    if (!muscleGroup) {
-      setErrors({ ...errors, muscleGroup: "Muscle group is required" });
-      isValid = false;
-    } else {
-      setErrors({ ...errors, muscleGroup: "" });
-    }
-    if (!sets) {
-      setErrors({ ...errors, sets: "Sets is required" });
-      isValid = false;
-    } else {
-      setErrors({ ...errors, sets: "" });
-    }
-    if (!reps) {
-      setErrors({ ...errors, reps: "Reps is required" });
-      isValid = false;
-    } else {
-      setErrors({ ...errors, reps: "" });
-    }
-    return isValid;
-  }
-
-  function handleSend() {
-    if (!validateForm()) {
-      return;
-    }
-
-    const exercise: ExercisesAdded = {
-      name: exerciseName,
-      muscleGroup: Array.from(muscleGroup)[0],
-      sets,
-      reps,
-      description,
-    };
-    onAdd(exercise);
+  const resetForm = React.useCallback(() => {
     setExerciseName("");
-    setMuscleGroup(new Set([]));
+    setMuscleGroup(new Set());
     setSets(1);
     setReps(1);
     setDescription("");
-    setErrors({
-      exerciseName: "",
-      muscleGroup: "",
-      sets: "",
-      reps: "",
-    });
+  }, []);
+
+  const validateForm = React.useCallback(() => {
+    if (!exerciseName.trim()) {
+      toast.error("Please enter an exercise name");
+      return false;
+    }
+    if (muscleGroup.size === 0) {
+      toast.error("Please select a muscle group");
+      return false;
+    }
+    if (!sets || sets < 1) {
+      toast.error("Sets must be at least 1");
+      return false;
+    }
+    if (!reps || reps < 1) {
+      toast.error("Reps must be at least 1");
+      return false;
+    }
+    return true;
+  }, [exerciseName, muscleGroup, sets, reps]);
+
+  const handleSend = React.useCallback(() => {
+    if (!validateForm()) return;
+
+    const exercise: ExercisesAdded = {
+      name: exerciseName.trim(),
+      muscleGroup: Array.from(muscleGroup)[0],
+      sets,
+      reps,
+      description: description.trim(),
+    };
+
+    onAdd(exercise);
+    toast.success("Exercise added successfully");
+
+    resetForm();
     onClose();
-  }
+  }, [
+    exerciseName,
+    muscleGroup,
+    sets,
+    reps,
+    description,
+    onAdd,
+    onClose,
+    resetForm,
+    validateForm,
+  ]);
 
   return (
     <>
       <Button variant="bordered" size="sm" onPress={onOpen}>
         <PlusIcon className="w-auto h-5" /> Add Exercise
       </Button>
+
       <Modal isOpen={isOpen} size="sm" onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -120,13 +117,14 @@ export default function AddExercise({
                   <h1 className="text-lg font-bold">
                     {mode === "create" ? "Add" : "Edit"} Exercise
                   </h1>
-                  <p className="text-xs font-normal text-neutral-400">
+                  <p className="text-xs text-neutral-400">
                     {mode === "create"
                       ? "Add a new exercise to the routine."
-                      : "Edit the exercise in the routine."}
+                      : "Edit the exercise details."}
                   </p>
                 </div>
               </ModalHeader>
+
               <ModalBody>
                 <div className="flex flex-col items-start gap-y-5">
                   <Input
@@ -136,25 +134,23 @@ export default function AddExercise({
                     size="sm"
                     value={exerciseName}
                     onValueChange={setExerciseName}
-                    errorMessage={errors.exerciseName}
                     isRequired
                   />
                   <Select
                     label="Muscle Group"
                     placeholder="Select a muscle group"
                     labelPlacement="outside"
-                    className="max-w-1/2"
                     size="sm"
                     selectedKeys={muscleGroup}
                     onSelectionChange={handleMuscleGroupChange}
-                    errorMessage={errors.muscleGroup}
                     isRequired
                   >
                     {muscleGroups.map((group) => (
                       <SelectItem key={group}>{group}</SelectItem>
                     ))}
                   </Select>
-                  <div className="flex justify-between gap-x-4">
+
+                  <div className="flex justify-between gap-x-4 w-full">
                     <NumberInput
                       label="Sets"
                       placeholder="e.g., 3"
@@ -162,7 +158,6 @@ export default function AddExercise({
                       size="sm"
                       value={sets}
                       onValueChange={setSets}
-                      errorMessage={errors.sets}
                       minValue={1}
                       maxValue={100}
                       isRequired
@@ -174,12 +169,12 @@ export default function AddExercise({
                       size="sm"
                       value={reps}
                       onValueChange={setReps}
-                      errorMessage={errors.reps}
                       minValue={1}
                       maxValue={100}
                       isRequired
                     />
                   </div>
+
                   <Textarea
                     label="Description (Optional)"
                     placeholder="Add notes about form, technique, etc."
@@ -190,6 +185,7 @@ export default function AddExercise({
                   />
                 </div>
               </ModalBody>
+
               <ModalFooter>
                 <Button size="sm" onPress={onClose}>
                   Close
