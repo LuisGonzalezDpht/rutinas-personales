@@ -19,6 +19,8 @@ import {
 import { PlusIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
+import useSettings from "@/store/settings";
+import { getI18nText } from "@/utils/i18n";
 
 export default function AddExercise({
   mode = "create",
@@ -28,6 +30,7 @@ export default function AddExercise({
   onAdd: (exercise: ExercisesAdded) => void;
 }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const settings = useSettings();
 
   const [exerciseName, setExerciseName] = React.useState("");
   const [muscleGroup, setMuscleGroup] = React.useState<Set<string>>(new Set());
@@ -56,23 +59,23 @@ export default function AddExercise({
 
   const validateForm = React.useCallback(() => {
     if (!exerciseName.trim()) {
-      toast.error("Please enter an exercise name");
+      toast.error(getI18nText("addExercise.validation.exerciseNameRequired", settings.language));
       return false;
     }
     if (muscleGroup.size === 0) {
-      toast.error("Please select a muscle group");
+      toast.error(getI18nText("addExercise.validation.muscleGroupRequired", settings.language));
       return false;
     }
     if (!sets || sets < 1) {
-      toast.error("Sets must be at least 1");
+      toast.error(getI18nText("addExercise.validation.setsMin", settings.language));
       return false;
     }
     if (!reps || reps < 1) {
-      toast.error("Reps must be at least 1");
+      toast.error(getI18nText("addExercise.validation.repsMin", settings.language));
       return false;
     }
     return true;
-  }, [exerciseName, muscleGroup, sets, reps]);
+  }, [exerciseName, muscleGroup, sets, reps, settings.language]);
 
   const handleSend = React.useCallback(() => {
     if (!validateForm()) return;
@@ -86,26 +89,16 @@ export default function AddExercise({
     };
 
     onAdd(exercise);
-    toast.success("Exercise added successfully");
+    toast.success(getI18nText("addExercise.success", settings.language));
 
     resetForm();
     onClose();
-  }, [
-    exerciseName,
-    muscleGroup,
-    sets,
-    reps,
-    description,
-    onAdd,
-    onClose,
-    resetForm,
-    validateForm,
-  ]);
+  }, [exerciseName, muscleGroup, sets, reps, description, onAdd, onClose, resetForm, validateForm, settings.language]);
 
   return (
     <>
       <Button variant="bordered" size="sm" onPress={onOpen}>
-        <PlusIcon className="w-auto h-5" /> Add Exercise
+        <PlusIcon className="w-auto h-5" /> {getI18nText("addExercise.button", settings.language)}
       </Button>
 
       <Modal isOpen={isOpen} size="sm" onOpenChange={onOpenChange}>
@@ -115,12 +108,14 @@ export default function AddExercise({
               <ModalHeader>
                 <div className="flex flex-col items-start">
                   <h1 className="text-lg font-bold">
-                    {mode === "create" ? "Add" : "Edit"} Exercise
+                    {mode === "create"
+                      ? getI18nText("addExercise.addTitle", settings.language)
+                      : getI18nText("addExercise.editTitle", settings.language)}
                   </h1>
                   <p className="text-xs text-neutral-400">
                     {mode === "create"
-                      ? "Add a new exercise to the routine."
-                      : "Edit the exercise details."}
+                      ? getI18nText("addExercise.addDescription", settings.language)
+                      : getI18nText("addExercise.editDescription", settings.language)}
                   </p>
                 </div>
               </ModalHeader>
@@ -128,8 +123,8 @@ export default function AddExercise({
               <ModalBody>
                 <div className="flex flex-col items-start gap-y-5">
                   <Input
-                    label="Exercise Name"
-                    placeholder="e.g., Bench Press, Squats"
+                    label={getI18nText("addExercise.exerciseName", settings.language)}
+                    placeholder={getI18nText("addExercise.placeholder.exerciseName", settings.language)}
                     labelPlacement="outside"
                     size="sm"
                     value={exerciseName}
@@ -137,8 +132,8 @@ export default function AddExercise({
                     isRequired
                   />
                   <Select
-                    label="Muscle Group"
-                    placeholder="Select a muscle group"
+                    label={getI18nText("addExercise.muscleGroup", settings.language)}
+                    placeholder={getI18nText("addExercise.placeholder.muscleGroup", settings.language)}
                     labelPlacement="outside"
                     size="sm"
                     selectedKeys={muscleGroup}
@@ -152,8 +147,8 @@ export default function AddExercise({
 
                   <div className="flex justify-between gap-x-4 w-full">
                     <NumberInput
-                      label="Sets"
-                      placeholder="e.g., 3"
+                      label={getI18nText("addExercise.sets", settings.language)}
+                      placeholder={getI18nText("addExercise.placeholder.sets", settings.language)}
                       labelPlacement="outside"
                       size="sm"
                       value={sets}
@@ -163,8 +158,8 @@ export default function AddExercise({
                       isRequired
                     />
                     <NumberInput
-                      label="Reps"
-                      placeholder="e.g., 10"
+                      label={getI18nText("addExercise.reps", settings.language)}
+                      placeholder={getI18nText("addExercise.placeholder.reps", settings.language)}
                       labelPlacement="outside"
                       size="sm"
                       value={reps}
@@ -176,8 +171,8 @@ export default function AddExercise({
                   </div>
 
                   <Textarea
-                    label="Description (Optional)"
-                    placeholder="Add notes about form, technique, etc."
+                    label={getI18nText("addExercise.descriptionOptional", settings.language)}
+                    placeholder={getI18nText("addExercise.placeholder.description", settings.language)}
                     labelPlacement="outside"
                     size="sm"
                     value={description}
@@ -188,10 +183,12 @@ export default function AddExercise({
 
               <ModalFooter>
                 <Button size="sm" onPress={onClose}>
-                  Close
+                  {getI18nText("common.close", settings.language)}
                 </Button>
                 <Button size="sm" onPress={handleSend} color="primary">
-                  {mode === "create" ? "Add" : "Save"}
+                  {mode === "create"
+                    ? getI18nText("common.add", settings.language)
+                    : getI18nText("common.save", settings.language)}
                 </Button>
               </ModalFooter>
             </>

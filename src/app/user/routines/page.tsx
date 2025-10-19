@@ -15,11 +15,15 @@ import {
   Skeleton,
 } from "@heroui/react";
 import ApiDeleteRoutine from "@/utils/supabase/api/routines";
+import useSettings from "@/store/settings";
+import { getI18nText } from "@/utils/i18n";
 
 export default function Routines() {
   const auth = useAuth();
   const [routines, setRoutines] = useState<routineReponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const settings = useSettings();
+  const t = (key: string) => getI18nText(key, settings.language);
 
   useEffect(() => {
     if (!auth.sessionData?.user.id) return;
@@ -71,7 +75,10 @@ export default function Routines() {
 
   return (
     <div>
-      <HeaderPage title="Routines" subtitle="Manage your routines">
+      <HeaderPage
+        title={`${t("routines.title")}`}
+        subtitle={`${t("routines.subtitle")}`}
+      >
         {auth.isAuthenticated && <CreateRoutine onAdd={refreshRoutines} />}
       </HeaderPage>
       <div className="w-full p-5 flex flex-wrap gap-5">
@@ -105,16 +112,18 @@ export default function Routines() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent>
-                            <div className="flex flex-col gap-y-3">
+                            <div className="flex flex-col gap-y-2">
                               <Button
                                 variant="flat"
                                 color="danger"
                                 onPress={() => deleteRoutine(m.id)}
                               >
-                                <Delete className="w-auto h-4" /> Borrar Rutina
+                                <Delete className="w-auto h-4" />{" "}
+                                {t("routines.deleteRoutine")}
                               </Button>
                               <Button variant="flat" color="success">
-                                <Edit className="w-auto h-4" /> Editar Rutina
+                                <Edit className="w-auto h-4" />{" "}
+                                {t("routines.editRoutine")}
                               </Button>
                             </div>
                           </PopoverContent>
@@ -128,7 +137,7 @@ export default function Routines() {
                       <p className="gap-x-3 flex items-center">
                         <Dumbbell className="inline-block w-auto h-4 text-neutral-400" />
                         <span className="text-neutral-400">
-                          {m.exercises.length} exercises
+                          {m.exercises.length} {t("routines.exercises")}
                         </span>
                       </p>
                     </div>
@@ -138,10 +147,7 @@ export default function Routines() {
             </>
           ) : (
             <div className="text-center w-full p-10 bg-neutral-800 rounded-lg">
-              <p className="text-xs">
-                No routines found. Click &quot;Create Routine&quot; to get
-                started.
-              </p>
+              <p className="text-xs">{t("routines.empty")}</p>
             </div>
           )}
         </NoAuth>

@@ -16,32 +16,36 @@ import {
 import { Send } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
+import useSettings from "@/store/settings";
+import { getI18nText } from "@/utils/i18n";
 
 export default function RecoverPassword() {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [email, setEmail] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const settings = useSettings();
+  const t = (key: string) => getI18nText(key, settings.language);
 
   const onSubmit = async () => {
     if (!email) {
-      toast.error("Please enter your email");
+      toast.error(t("recoverPassword.validation.emailRequired"));
       return;
     }
 
     if (!emailValidator(email)) {
-      toast.error("Please enter a valid email address");
+      toast.error(t("recoverPassword.validation.emailInvalid"));
       return;
     }
 
     try {
       setLoading(true);
       await ApiRecoverPassword(email);
-      toast.success("Recovery email sent successfully");
+      toast.success(t("recoverPassword.success"));
       setEmail("");
-      onClose(); // ✅ cerrar modal tras envío exitoso
+      onClose();
     } catch (err) {
       console.error(err);
-      toast.error("Error sending recovery email");
+      toast.error(t("recoverPassword.error"));
     } finally {
       setLoading(false);
     }
@@ -50,7 +54,7 @@ export default function RecoverPassword() {
   return (
     <>
       <Link size="sm" underline="hover" onPress={onOpen}>
-        Recover password
+        {t("recoverPassword.link")}
       </Link>
 
       <Modal
@@ -66,11 +70,11 @@ export default function RecoverPassword() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>Recover password</ModalHeader>
+              <ModalHeader>{t("recoverPassword.title")}</ModalHeader>
               <ModalBody>
-                <p>Enter your email to recover your password</p>
+                <p>{t("recoverPassword.enterEmail")}</p>
                 <Input
-                  placeholder="Email"
+                  placeholder={t("recoverPassword.emailPlaceholder")}
                   value={email}
                   onValueChange={setEmail}
                   type="email"
@@ -83,7 +87,7 @@ export default function RecoverPassword() {
                   isLoading={loading}
                   className="w-full"
                 >
-                  Send <Send className="inline-block w-4 h-4 ml-2" />
+                  {t("recoverPassword.action")} <Send className="inline-block w-4 h-4 ml-2" />
                 </Button>
               </ModalFooter>
             </>

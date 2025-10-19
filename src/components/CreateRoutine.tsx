@@ -22,6 +22,8 @@ import RpcCreateRoutine from "@/utils/supabase/rpc/routines";
 import ApiGetUser from "@/utils/supabase/api/user";
 import useAuth from "@/store/auth";
 import { toast } from "sonner";
+import useSettings from "@/store/settings";
+import { getI18nText } from "@/utils/i18n";
 
 export default function CreateRoutine({
   mode = "create",
@@ -40,6 +42,7 @@ export default function CreateRoutine({
   const [loading, setLoading] = React.useState(false);
 
   const auth = useAuth();
+  const settings = useSettings();
 
   const addExercise = React.useCallback(
     (exercise: ExercisesAdded) => setExercises((prev) => [...prev, exercise]),
@@ -54,7 +57,9 @@ export default function CreateRoutine({
 
   async function addRoutine() {
     if (exercises.length === 0 || !routineName || daySelected.size === 0) {
-      toast.error("Please complete all fields before creating a routine");
+      toast.error(
+        getI18nText("createRoutine.validation.completeAllFields", settings.language)
+      );
       return;
     }
 
@@ -79,7 +84,7 @@ export default function CreateRoutine({
       const response = await RpcCreateRoutine(requestData);
 
       if (response.code === 200) {
-        toast.success("Routine created successfully");
+        toast.success(getI18nText("createRoutine.success", settings.language));
         onAdd();
         resetForm();
         onClose();
@@ -87,7 +92,7 @@ export default function CreateRoutine({
         toast.error(response.message);
       }
     } catch (err) {
-      toast.error("An error occurred while creating the routine");
+      toast.error(getI18nText("createRoutine.error.generic", settings.language));
       console.error(err);
     } finally {
       setLoading(false);
@@ -133,10 +138,10 @@ export default function CreateRoutine({
         ))
       ) : (
         <p className="text-xs p-4 text-center">
-          No exercises added yet. Click &quot;Add Exercise&quot; to get started.
+          {getI18nText("createRoutine.noExercisesMessage", settings.language)}
         </p>
       ),
-    [exercises, removeExercise]
+    [exercises, removeExercise, settings.language]
   );
 
   return (
@@ -147,8 +152,9 @@ export default function CreateRoutine({
         color="primary"
         className="w-full md:justify-start"
       >
-        <Plus className="h-4 w-4" /> {mode === "create" ? "Create" : "Edit"} new
-        routine
+        <Plus className="h-4 w-4" /> {mode === "create"
+          ? getI18nText("createRoutine.button.create", settings.language)
+          : getI18nText("createRoutine.button.edit", settings.language)}
       </Button>
 
       <Modal isOpen={isOpen} size="sm" onOpenChange={onOpenChange}>
@@ -158,12 +164,14 @@ export default function CreateRoutine({
               <ModalHeader>
                 <div className="flex flex-col items-start">
                   <h1 className="text-lg font-bold">
-                    {mode === "create" ? "Create" : "Edit"} Routine
+                    {mode === "create"
+                      ? getI18nText("createRoutine.header.create", settings.language)
+                      : getI18nText("createRoutine.header.edit", settings.language)}
                   </h1>
                   <p className="text-xs text-neutral-400">
                     {mode === "create"
-                      ? "Set up a new workout routine with exercises."
-                      : "Edit the existing routine and its exercises."}
+                      ? getI18nText("createRoutine.description.create", settings.language)
+                      : getI18nText("createRoutine.description.edit", settings.language)}
                   </p>
                 </div>
               </ModalHeader>
@@ -171,16 +179,16 @@ export default function CreateRoutine({
               <ModalBody>
                 <div className="flex flex-col items-start gap-y-5">
                   <Input
-                    label="Routine Name"
-                    placeholder="e.g., Push Day, Pull Day, Leg Day"
+                    label={getI18nText("createRoutine.routineName", settings.language)}
+                    placeholder={getI18nText("createRoutine.placeholder.routineName", settings.language)}
                     labelPlacement="outside"
                     size="sm"
                     value={routineName}
                     onValueChange={setRoutineName}
                   />
                   <Select
-                    label="Day of Week"
-                    placeholder="Select day"
+                    label={getI18nText("createRoutine.dayOfWeek", settings.language)}
+                    placeholder={getI18nText("createRoutine.placeholder.selectDays", settings.language)}
                     labelPlacement="outside"
                     items={daysOfWeek}
                     selectedKeys={daySelected}
@@ -198,7 +206,7 @@ export default function CreateRoutine({
 
                   <div className="py-3 w-full space-y-5">
                     <div className="w-full flex justify-between items-center">
-                      <h5 className="text-sm font-bold">Exercises</h5>
+                      <h5 className="text-sm font-bold">{getI18nText("common.exercises", settings.language)}</h5>
                       <AddExercise mode={mode} onAdd={addExercise} />
                     </div>
 
@@ -211,7 +219,7 @@ export default function CreateRoutine({
 
               <ModalFooter>
                 <Button size="sm" onPress={onClose} disabled={loading}>
-                  Close
+                  {getI18nText("common.close", settings.language)}
                 </Button>
                 <Button
                   size="sm"
@@ -219,7 +227,9 @@ export default function CreateRoutine({
                   color="primary"
                   isLoading={loading}
                 >
-                  {mode === "create" ? "Create" : "Save"}
+                  {mode === "create"
+                    ? getI18nText("common.create", settings.language)
+                    : getI18nText("common.save", settings.language)}
                 </Button>
               </ModalFooter>
             </>

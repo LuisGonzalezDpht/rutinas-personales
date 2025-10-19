@@ -115,7 +115,7 @@ export default function SideBar() {
               <>
                 <PanelLeftClose className="h-7 w-auto" />
                 <span className="text-lg font-medium text-nowrap">
-                  Rutinas Personales
+                  {getI18nText("sideBar.brand", settings.language)}
                 </span>
               </>
             ) : (

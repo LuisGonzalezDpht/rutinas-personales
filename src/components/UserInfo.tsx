@@ -81,8 +81,7 @@ export default function UserInfo({
           )}
         </div>
       </PopoverTrigger>
-
-      <PopoverContent className="p-2 w-full">
+      <PopoverContent className="p-2 w-full max-w-md">
         <Button
           size="sm"
           color="danger"

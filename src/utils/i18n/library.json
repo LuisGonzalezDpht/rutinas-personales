@@ -2,7 +2,7 @@
   {
     "id": "footer.text",
     "en": "© 2025 Personal Workout. All rights reserved. 🚀 Created by Danphont",
-    "es": "© 2025 Rutinas Personales. All rights reserved. 🚀 Pagina creada por Danphont"
+    "es": "© 2025 Rutinas Personales. Todos los derechos reservados. 🚀 Creado por Danphont"
   },
   {
     "id": "sideBar.home",
@@ -35,6 +35,34 @@
     "es": "Configuración"
   },
   {
+    "id": "sideBar.brand",
+    "en": "Personal Routines",
+    "es": "Rutinas Personales"
+  },
+  {
+    "id": "sideBar.loading",
+    "en": "Loading...",
+    "es": "Cargando..."
+  },
+
+  {
+    "id": "login.login",
+    "en": "Log In",
+    "es": "Iniciar sesión"
+  },
+  {
+    "id": "login.rememberMe",
+    "en": "Remember Me",
+    "es": "Recordar sesión"
+  },
+
+  {
+    "id": "userInfo.logOut",
+    "en": "Log Out",
+    "es": "Cerrar sesión"
+  },
+
+  {
     "id": "signUp.email",
     "en": "Email",
     "es": "Correo electrónico"
@@ -60,61 +88,6 @@
     "es": "Teléfono"
   },
   {
-    "id": "signUp.placeholder.phone",
-    "en": "Enter your phone",
-    "es": "Ingresa tu teléfono"
-  },
-  {
-    "id": "signUp.placeholder.name",
-    "en": "Enter your Name",
-    "es": "Ingresa tu nombre"
-  },
-  {
-    "id": "signUp.error.name",
-    "en": "Invalid name",
-    "es": "Nombre inválido"
-  },
-  {
-    "id": "signUp.error.email",
-    "en": "Invalid email",
-    "es": "Correo electrónico inválido"
-  },
-  {
-    "id": "signUp.error.phone",
-    "en": "Invalid phone",
-    "es": "Teléfono inválido"
-  },
-  {
-    "id": "signUp.error.password",
-    "en": "Invalid password",
-    "es": "Contraseña inválida"
-  },
-  {
-    "id": "signUp.error.length",
-    "en": "Password must be at least 4 characters long",
-    "es": "La contraseña debe tener al menos 4 caracteres"
-  },
-  {
-    "id": "signUp.error.uppercase",
-    "en": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-    "es": "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
-  },
-  {
-    "id": "signUp.error.symbol",
-    "en": "Password must contain at least one special character",
-    "es": "La contraseña debe contener al menos un carácter especial"
-  },
-  {
-    "id": "signUp.error.confirmPassword",
-    "en": "Passwords do not match",
-    "es": "Las contraseñas no coinciden"
-  },
-  {
-    "id": "signUp.success",
-    "en": "Sign Up Successful",
-    "es": "Registro exitoso"
-  },
-  {
     "id": "signUp.placeholder.email",
     "en": "Enter your email",
     "es": "Ingresa tu correo electrónico"
@@ -130,28 +103,471 @@
     "es": "Confirma tu contraseña"
   },
   {
+    "id": "signUp.placeholder.name",
+    "en": "Enter your name",
+    "es": "Ingresa tu nombre"
+  },
+  {
+    "id": "signUp.placeholder.phone",
+    "en": "Enter your phone number",
+    "es": "Ingresa tu número de teléfono"
+  },
+  {
+    "id": "signUp.error.name",
+    "en": "Invalid name",
+    "es": "Nombre inválido"
+  },
+  {
+    "id": "signUp.error.email",
+    "en": "Invalid email",
+    "es": "Correo electrónico inválido"
+  },
+  {
+    "id": "signUp.error.phone",
+    "en": "Invalid phone number",
+    "es": "Número de teléfono inválido"
+  },
+  {
+    "id": "signUp.error.password",
+    "en": "Invalid password",
+    "es": "Contraseña inválida"
+  },
+  {
+    "id": "signUp.error.length",
+    "en": "Password must be at least 4 characters long",
+    "es": "La contraseña debe tener al menos 4 caracteres"
+  },
+  {
+    "id": "signUp.error.uppercase",
+    "en": "Password must include an uppercase letter, a lowercase letter, a number, and a special character",
+    "es": "La contraseña debe incluir una letra mayúscula, una minúscula, un número y un carácter especial"
+  },
+  {
+    "id": "signUp.error.symbol",
+    "en": "Password must include at least one special character",
+    "es": "La contraseña debe incluir al menos un carácter especial"
+  },
+  {
+    "id": "signUp.error.confirmPassword",
+    "en": "Passwords do not match",
+    "es": "Las contraseñas no coinciden"
+  },
+  {
+    "id": "signUp.success",
+    "en": "Registration successful!",
+    "es": "¡Registro exitoso!"
+  },
+  {
     "id": "signUp.signUp",
     "en": "Sign Up",
     "es": "Registrarse"
   },
+
   {
-    "id": "login.login",
-    "en": "Log In",
-    "es": "Iniciar sesión"
+    "id": "common.close",
+    "en": "Close",
+    "es": "Cerrar"
   },
   {
-    "id": "login.rememberMe",
-    "en": "Remember Me",
-    "es": "Recordar sesión"
+    "id": "common.save",
+    "en": "Save",
+    "es": "Guardar"
   },
   {
-    "id": "userInfo.logOut",
-    "en": "Log Out",
-    "es": "Cerrar sesión"
+    "id": "common.add",
+    "en": "Add",
+    "es": "Agregar"
   },
   {
-    "id": "sideBar.loading",
-    "en": "Loading...",
-    "es": "Cargando..."
+    "id": "common.create",
+    "en": "Create",
+    "es": "Crear"
+  },
+  {
+    "id": "common.edit",
+    "en": "Edit",
+    "es": "Editar"
+  },
+  {
+    "id": "common.exercises",
+    "en": "exercises",
+    "es": "ejercicios"
+  },
+  {
+    "id": "common.loggedInText",
+    "en": "You are logged in",
+    "es": "Estás logueado"
+  },
+
+  {
+    "id": "addExercise.button",
+    "en": "Add Exercise",
+    "es": "Agregar ejercicio"
+  },
+  {
+    "id": "addExercise.addTitle",
+    "en": "Add Exercise",
+    "es": "Agregar ejercicio"
+  },
+  {
+    "id": "addExercise.editTitle",
+    "en": "Edit Exercise",
+    "es": "Editar ejercicio"
+  },
+  {
+    "id": "addExercise.addDescription",
+    "en": "Add a new exercise to the routine.",
+    "es": "Agrega un nuevo ejercicio a la rutina."
+  },
+  {
+    "id": "addExercise.editDescription",
+    "en": "Edit the exercise in the routine.",
+    "es": "Edita el ejercicio de la rutina."
+  },
+  {
+    "id": "addExercise.exerciseName",
+    "en": "Exercise Name",
+    "es": "Nombre del ejercicio"
+  },
+  {
+    "id": "addExercise.placeholder.exerciseName",
+    "en": "e.g., Bench Press, Squats",
+    "es": "p. ej., Press de banca, Sentadillas"
+  },
+  {
+    "id": "addExercise.muscleGroup",
+    "en": "Muscle Group",
+    "es": "Grupo muscular"
+  },
+  {
+    "id": "addExercise.placeholder.muscleGroup",
+    "en": "Select a muscle group",
+    "es": "Selecciona un grupo muscular"
+  },
+  {
+    "id": "addExercise.sets",
+    "en": "Sets",
+    "es": "Series"
+  },
+  {
+    "id": "addExercise.placeholder.sets",
+    "en": "e.g., 3",
+    "es": "p. ej., 3"
+  },
+  {
+    "id": "addExercise.reps",
+    "en": "Reps",
+    "es": "Repeticiones"
+  },
+  {
+    "id": "addExercise.placeholder.reps",
+    "en": "e.g., 10",
+    "es": "p. ej., 10"
+  },
+  {
+    "id": "addExercise.descriptionOptional",
+    "en": "Description (Optional)",
+    "es": "Descripción (Opcional)"
+  },
+  {
+    "id": "addExercise.placeholder.description",
+    "en": "Add notes about form, technique, etc.",
+    "es": "Agrega notas sobre técnica, etc."
+  },
+  {
+    "id": "addExercise.validation.exerciseNameRequired",
+    "en": "Exercise name is required",
+    "es": "El nombre del ejercicio es obligatorio"
+  },
+  {
+    "id": "addExercise.validation.muscleGroupRequired",
+    "en": "Muscle group is required",
+    "es": "El grupo muscular es obligatorio"
+  },
+  {
+    "id": "addExercise.validation.setsRequired",
+    "en": "Sets are required",
+    "es": "Las series son obligatorias"
+  },
+  {
+    "id": "addExercise.validation.repsRequired",
+    "en": "Reps are required",
+    "es": "Las repeticiones son obligatorias"
+  },
+
+  {
+    "id": "createRoutine.button.create",
+    "en": "Create new routine",
+    "es": "Crear nueva rutina"
+  },
+  {
+    "id": "createRoutine.button.edit",
+    "en": "Edit routine",
+    "es": "Editar rutina"
+  },
+  {
+    "id": "createRoutine.header.create",
+    "en": "Create Routine",
+    "es": "Crear rutina"
+  },
+  {
+    "id": "createRoutine.header.edit",
+    "en": "Edit Routine",
+    "es": "Editar rutina"
+  },
+  {
+    "id": "createRoutine.description.create",
+    "en": "Set up a new workout routine with exercises.",
+    "es": "Configura una nueva rutina de ejercicios."
+  },
+  {
+    "id": "createRoutine.description.edit",
+    "en": "Edit the routine with exercises.",
+    "es": "Edita la rutina con ejercicios."
+  },
+  {
+    "id": "createRoutine.routineName",
+    "en": "Routine Name",
+    "es": "Nombre de la rutina"
+  },
+  {
+    "id": "createRoutine.placeholder.routineName",
+    "en": "e.g., Push Day, Pull Day, Leg Day",
+    "es": "p. ej., Día de empuje, Día de tracción, Día de piernas"
+  },
+  {
+    "id": "createRoutine.dayOfWeek",
+    "en": "Day of Week",
+    "es": "Día de la semana"
+  },
+  {
+    "id": "createRoutine.placeholder.selectDays",
+    "en": "Select days",
+    "es": "Selecciona días"
+  },
+  {
+    "id": "createRoutine.noExercisesMessage",
+    "en": "No exercises added yet. Click \"Add Exercise\" to get started.",
+    "es": "Aún no se han agregado ejercicios. Haz clic en \"Agregar ejercicio\" para comenzar."
+  },
+
+  {
+    "id": "routines.title",
+    "en": "Routines",
+    "es": "Rutinas"
+  },
+  {
+    "id": "routines.subtitle",
+    "en": "Manage your routines",
+    "es": "Administra tus rutinas"
+  },
+  {
+    "id": "routines.deleteRoutine",
+    "en": "Delete Routine",
+    "es": "Borrar rutina"
+  },
+  {
+    "id": "routines.editRoutine",
+    "en": "Edit Routine",
+    "es": "Editar rutina"
+  },
+  {
+    "id": "routines.exercises",
+    "en": "exercises",
+    "es": "ejercicios"
+  },
+
+  {
+    "id": "exercises.title",
+    "en": "Exercises",
+    "es": "Ejercicios"
+  },
+  {
+    "id": "exercises.subtitle",
+    "en": "Manage your exercises",
+    "es": "Administra tus ejercicios"
+  },
+  {
+    "id": "exercises.loggedInText",
+    "en": "You are logged in",
+    "es": "Estás logueado"
+  },
+  {
+    "id": "home.title",
+    "en": "Home",
+    "es": "Inicio"
+  },
+  {
+    "id": "home.subtitle",
+    "en": "Welcome to the Tracker",
+    "es": "Bienvenido al Rastreador"
+  },
+  {
+    "id": "settings.title",
+    "en": "Settings",
+    "es": "Configuración"
+  },
+  {
+    "id": "settings.subtitle",
+    "en": "Manage your account settings",
+    "es": "Administra la configuración de tu cuenta"
+  },
+  {
+    "id": "progress.title",
+    "en": "Progress",
+    "es": "Progreso"
+  },
+  {
+    "id": "progress.subtitle",
+    "en": "Track your progress",
+    "es": "Controla tu progreso"
+  },
+
+  {
+    "id": "recoverPassword.title",
+    "en": "Recover password",
+    "es": "Recuperar contraseña"
+  },
+  {
+    "id": "recoverPassword.link",
+    "en": "Recover password",
+    "es": "Recuperar contraseña"
+  },
+  {
+    "id": "recoverPassword.enterEmail",
+    "en": "Enter your email to recover your password",
+    "es": "Ingresa tu correo para recuperar tu contraseña"
+  },
+  {
+    "id": "recoverPassword.emailPlaceholder",
+    "en": "Email",
+    "es": "Correo electrónico"
+  },
+  {
+    "id": "recoverPassword.close",
+    "en": "Close",
+    "es": "Cerrar"
+  },
+  {
+    "id": "recoverPassword.action",
+    "en": "Send",
+    "es": "Enviar"
+  },
+  {
+    "id": "recoverPassword.validation.emailRequired",
+    "en": "Please enter your email",
+    "es": "Por favor ingresa tu correo"
+  },
+  {
+    "id": "recoverPassword.validation.emailInvalid",
+    "en": "Please enter a valid email address",
+    "es": "Por favor ingresa un correo válido"
+  },
+  {
+    "id": "recoverPassword.success",
+    "en": "Recovery email sent successfully",
+    "es": "Correo de recuperación enviado correctamente"
+  },
+  {
+    "id": "recoverPassword.error",
+    "en": "Error sending recovery email",
+    "es": "Error al enviar el correo de recuperación"
+  },
+
+  {
+    "id": "noAuth.message",
+    "en": "You need to be logged in to access this page.",
+    "es": "Debes iniciar sesión para acceder a esta página."
+  },
+
+  {
+    "id": "addExercise.success",
+    "en": "Exercise added successfully",
+    "es": "Ejercicio agregado correctamente"
+  },
+  {
+    "id": "addExercise.validation.setsMin",
+    "en": "Sets must be at least 1",
+    "es": "Las series deben ser al menos 1"
+  },
+  {
+    "id": "addExercise.validation.repsMin",
+    "en": "Reps must be at least 1",
+    "es": "Las repeticiones deben ser al menos 1"
+  },
+  {
+    "id": "createRoutine.validation.completeAllFields",
+    "en": "Please complete all fields before creating a routine",
+    "es": "Por favor completa todos los campos antes de crear una rutina"
+  },
+  {
+    "id": "createRoutine.success",
+    "en": "Routine created successfully",
+    "es": "Rutina creada correctamente"
+  },
+  {
+    "id": "createRoutine.error.generic",
+    "en": "An error occurred while creating the routine",
+    "es": "Ocurrió un error al crear la rutina"
+  },
+  {
+    "id": "routines.empty",
+    "en": "No routines found. Click \"Create Routine\" to get started.",
+    "es": "No se encontraron rutinas. Haz clic en \"Crear rutina\" para comenzar."
+  },
+  {
+    "id": "resetPassword.title",
+    "en": "Reset Password",
+    "es": "Restablecer contraseña"
+  },
+  {
+    "id": "resetPassword.newPassword",
+    "en": "New Password",
+    "es": "Nueva contraseña"
+  },
+  {
+    "id": "resetPassword.placeholder.newPassword",
+    "en": "Enter new password",
+    "es": "Ingresa nueva contraseña"
+  },
+  {
+    "id": "resetPassword.confirmPassword",
+    "en": "Confirm Password",
+    "es": "Confirmar contraseña"
+  },
+  {
+    "id": "resetPassword.placeholder.confirmPassword",
+    "en": "Re-enter password",
+    "es": "Reingresa la contraseña"
+  },
+  {
+    "id": "resetPassword.validation.fillAllFields",
+    "en": "Please fill in all fields",
+    "es": "Por favor completa todos los campos"
+  },
+  {
+    "id": "resetPassword.validation.passwordMismatch",
+    "en": "Passwords do not match",
+    "es": "Las contraseñas no coinciden"
+  },
+  {
+    "id": "resetPassword.validation.invalidLink",
+    "en": "Invalid recovery link",
+    "es": "Enlace de recuperación inválido"
+  },
+  {
+    "id": "resetPassword.success",
+    "en": "Password reset successfully",
+    "es": "Contraseña restablecida con éxito"
+  },
+  {
+    "id": "resetPassword.error",
+    "en": "Error resetting password",
+    "es": "Error al restablecer la contraseña"
+  },
+  {
+    "id": "resetPassword.action",
+    "en": "Reset Password",
+    "es": "Restablecer contraseña"
   }
 ]
