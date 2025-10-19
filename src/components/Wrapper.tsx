@@ -5,7 +5,7 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
 
   if (pathname === "/recover" || pathname === "/auth/login") {
     return (
-      <main className="max-h-screen h-full w-full flex items-center justify-center background">
+      <main className="min-h-screen w-full flex items-center justify-center background">
         {children}
       </main>
     );
