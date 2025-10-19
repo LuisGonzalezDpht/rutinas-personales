@@ -58,21 +58,21 @@ export default function SideBar() {
         label: getI18nText("sideBar.routines", settings.language),
         to: "/user/routines",
       },
-      {
-        icon: Dumbbell,
-        label: getI18nText("sideBar.exercises", settings.language),
-        to: "/user/exercises",
-      },
-      {
-        icon: TrendingUp,
-        label: getI18nText("sideBar.progress", settings.language),
-        to: "/user/progress",
-      },
-      {
-        icon: Settings,
-        label: getI18nText("sideBar.settings", settings.language),
-        to: "/user/settings",
-      },
+      // {
+      //   icon: Dumbbell,
+      //   label: getI18nText("sideBar.exercises", settings.language),
+      //   to: "/user/exercises",
+      // },
+      // {
+      //   icon: TrendingUp,
+      //   label: getI18nText("sideBar.progress", settings.language),
+      //   to: "/user/progress",
+      // },
+      // {
+      //   icon: Settings,
+      //   label: getI18nText("sideBar.settings", settings.language),
+      //   to: "/user/settings",
+      // },
     ],
     [settings.language]
   );
