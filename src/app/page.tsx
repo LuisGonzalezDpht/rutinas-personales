@@ -1,15 +1,13 @@
-import HeaderPage from "@/components/HeaderPage";
-import NoAuth from "@/components/NoAuth";
+"use client";
 
-export default function Home() {
+import { Spinner } from "@heroui/react";
+
+export default function NotFound() {
   return (
-    <div>
-      <HeaderPage title="Home" subtitle="Welcome to the Tracker" />
-      <div className="p-2">
-        <NoAuth>
-          <div>estas logueado</div>
-        </NoAuth>
+    <>
+      <div className="h-full w-full flex justify-center items-center">
+        <Spinner></Spinner>
       </div>
-    </div>
+    </>
   );
 }

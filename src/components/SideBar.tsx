@@ -1,44 +1,58 @@
 "use client";
 
 import { Button } from "@heroui/react";
-import { Calendar, Dumbbell, House, Settings, TrendingUp } from "lucide-react";
+import {
+  Calendar,
+  Dumbbell,
+  House,
+  PanelLeftClose,
+  Settings,
+  TrendingUp,
+} from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import UserInfo from "@/components/UserInfo";
 import useAuth from "@/store/auth";
-import Login from "@/components/Login";
-import SignUp from "./SignUp";
+import { getI18nText } from "@/utils/i18n";
+import useSettings from "@/store/settings";
+import React from "react";
 
 export default function SideBar() {
   const auth = useAuth();
   const router = useRouter();
+  const settings = useSettings();
 
   const pathname = usePathname();
 
   const items = [
     {
       icon: House,
-      label: "Home",
-      to: "/",
+      label: getI18nText("sideBar.home", settings.language),
+      to: "/user/home",
+      auth: true,
     },
     {
       icon: Calendar,
-      label: "Routines",
-      to: "/routines",
+      label: getI18nText("sideBar.routines", settings.language),
+      to: "/user/routines",
+      auth: true,
     },
     {
       icon: Dumbbell,
-      label: "Exercises",
-      to: "/exercises",
+      label: getI18nText("sideBar.exercises", settings.language),
+      to: "/user/exercises",
+      auth: true,
     },
     {
       icon: TrendingUp,
-      label: "Progress",
-      to: "/progress",
+      label: getI18nText("sideBar.progress", settings.language),
+      to: "/user/progress",
+      auth: true,
     },
     {
       icon: Settings,
-      label: "Settings",
-      to: "/settings",
+      label: getI18nText("sideBar.settings", settings.language),
+      to: "/user/settings",
+      auth: true,
     },
   ];
 
@@ -46,48 +60,62 @@ export default function SideBar() {
     router.push(to);
   }
 
+  const navClass =
+    "w-full border-r border-r-neutral-700 min-h-screen flex flex-col justify-between transition-all duration-200 ease-in-out";
+
   return (
-    <nav className="max-w-52 border-r border-r-neutral-700 min-h-screen flex flex-col justify-between">
-      <div className="py-3 px-2 border-b border-b-neutral-700 w-full">
-        <h1 className="text-lg font-bold flex md:justify-between justify-center items-center w-full gap-x-3">
-          <Dumbbell className="h-8 w-auto bg-primary text-black rounded-lg p-0.5" />
-          <span className="w-36 md:block hidden">Tracker</span>
-        </h1>
-      </div>
-      <ul className="h-full space-y-0.5 py-1 px-0.5">
-        {items.map((item) => (
-          <li key={item.label}>
-            <Button
-              variant={item.to === pathname ? "flat" : "light"}
-              size="sm"
-              className={
-                item.to === pathname
-                  ? "w-full md:justify-start"
-                  : "w-full md:justify-start text-neutral-500"
-              }
-              onPress={() => goto(item.to)}
-            >
-              <item.icon className="h-4 w-4" />{" "}
-              <span className="md:block hidden">{item.label}</span>
-            </Button>
-          </li>
-        ))}
-      </ul>
-      <div className="border-t border-t-neutral-700 w-full max-h-[4.7rem] h-full flex flex-col justify-center items-center">
-        {auth.isAuthenticated ? (
-          <UserInfo
-            src="https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cGVyZmlsfGVufDB8fDB8fHww"
-            name="Luis"
-            email="luis@example.com"
-            alt="Luis"
-          />
-        ) : (
-          <div className="flex flex-col justify-center items-center gap-y-0.5 w-full px-0.5">
-            <Login />
-            <SignUp />
+    auth.isAuthenticated && (
+      <nav
+        className={`${
+          settings.sidebarExpand ? "max-w-64" : "max-w-15"
+        } ${navClass}`}
+      >
+        <div className="py-3 px-2 border-b border-b-neutral-700 w-full">
+          <h1 className="text-lg font-bold flex justify-center items-center w-full gap-x-3">
+            <PanelLeftClose
+              className="h-8 w-full bg-secondary hover:bg-secondary-300 cursor-pointer text-black rounded-lg p-0.5"
+              onClick={() => settings.setSidebarExpand(!settings.sidebarExpand)}
+            />
+          </h1>
+        </div>
+        <ul className="h-full space-y-0.5 ">
+          {items.map(
+            (item) =>
+              auth.isAuthenticated === item.auth && (
+                <li key={item.label}>
+                  <div
+                    className={`w-full flex items-center gap-x-2 px-2 py-3  hover:bg-neutral-900 cursor-pointer transition-all duration-200 ease-in-out ${
+                      item.to === pathname
+                        ? "text-neutral-500 bg-neutral-900 font-bold"
+                        : ""
+                    } ${
+                      settings.sidebarExpand
+                        ? "max-w-64"
+                        : "max-w-15 justify-center"
+                    }`}
+                    onClick={() => goto(item.to)}
+                  >
+                    <item.icon className="h-6 w-auto" />{" "}
+                    {settings.sidebarExpand && (
+                      <span className="text-lg font-medium">{item.label}</span>
+                    )}
+                  </div>
+                </li>
+              )
+          )}
+        </ul>
+        {auth.isAuthenticated && (
+          <div className="border-t border-t-neutral-700 w-full max-h-[4.7rem] h-full flex flex-col justify-center items-center">
+            <UserInfo
+              src=""
+              name={auth.sessionData?.user?.username || ""}
+              email={auth.sessionData?.user?.email || ""}
+              alt={auth.sessionData?.user?.username || ""}
+              isExpand={settings.sidebarExpand}
+            />
           </div>
         )}
-      </div>
-    </nav>
+      </nav>
+    )
   );
 }

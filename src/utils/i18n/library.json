@@ -1,0 +1,157 @@
+[
+  {
+    "id": "footer.text",
+    "en": "© 2025 Personal Workout. All rights reserved. 🚀 Created by Danphont",
+    "es": "© 2025 Rutinas Personales. All rights reserved. 🚀 Pagina creada por Danphont"
+  },
+  {
+    "id": "sideBar.home",
+    "en": "Home",
+    "es": "Inicio"
+  },
+  {
+    "id": "sideBar.routines",
+    "en": "Routines",
+    "es": "Rutinas"
+  },
+  {
+    "id": "sideBar.profile",
+    "en": "Profile",
+    "es": "Perfil"
+  },
+  {
+    "id": "sideBar.exercises",
+    "en": "Exercises",
+    "es": "Ejercicios"
+  },
+  {
+    "id": "sideBar.progress",
+    "en": "Progress",
+    "es": "Progreso"
+  },
+  {
+    "id": "sideBar.settings",
+    "en": "Settings",
+    "es": "Configuración"
+  },
+  {
+    "id": "signUp.email",
+    "en": "Email",
+    "es": "Correo electrónico"
+  },
+  {
+    "id": "signUp.password",
+    "en": "Password",
+    "es": "Contraseña"
+  },
+  {
+    "id": "signUp.confirmPassword",
+    "en": "Confirm Password",
+    "es": "Confirmar contraseña"
+  },
+  {
+    "id": "signUp.name",
+    "en": "Name",
+    "es": "Nombre"
+  },
+  {
+    "id": "signUp.phone",
+    "en": "Phone",
+    "es": "Teléfono"
+  },
+  {
+    "id": "signUp.placeholder.phone",
+    "en": "Enter your phone",
+    "es": "Ingresa tu teléfono"
+  },
+  {
+    "id": "signUp.placeholder.name",
+    "en": "Enter your Name",
+    "es": "Ingresa tu nombre"
+  },
+  {
+    "id": "signUp.error.name",
+    "en": "Invalid name",
+    "es": "Nombre inválido"
+  },
+  {
+    "id": "signUp.error.email",
+    "en": "Invalid email",
+    "es": "Correo electrónico inválido"
+  },
+  {
+    "id": "signUp.error.phone",
+    "en": "Invalid phone",
+    "es": "Teléfono inválido"
+  },
+  {
+    "id": "signUp.error.password",
+    "en": "Invalid password",
+    "es": "Contraseña inválida"
+  },
+  {
+    "id": "signUp.error.length",
+    "en": "Password must be at least 4 characters long",
+    "es": "La contraseña debe tener al menos 4 caracteres"
+  },
+  {
+    "id": "signUp.error.uppercase",
+    "en": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+    "es": "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
+  },
+  {
+    "id": "signUp.error.symbol",
+    "en": "Password must contain at least one special character",
+    "es": "La contraseña debe contener al menos un carácter especial"
+  },
+  {
+    "id": "signUp.error.confirmPassword",
+    "en": "Passwords do not match",
+    "es": "Las contraseñas no coinciden"
+  },
+  {
+    "id": "signUp.success",
+    "en": "Sign Up Successful",
+    "es": "Registro exitoso"
+  },
+  {
+    "id": "signUp.placeholder.email",
+    "en": "Enter your email",
+    "es": "Ingresa tu correo electrónico"
+  },
+  {
+    "id": "signUp.placeholder.password",
+    "en": "Enter your password",
+    "es": "Ingresa tu contraseña"
+  },
+  {
+    "id": "signUp.placeholder.confirmPassword",
+    "en": "Confirm your password",
+    "es": "Confirma tu contraseña"
+  },
+  {
+    "id": "signUp.signUp",
+    "en": "Sign Up",
+    "es": "Registrarse"
+  },
+  {
+    "id": "login.login",
+    "en": "Log In",
+    "es": "Iniciar sesión"
+  },
+  {
+    "id": "login.rememberMe",
+    "en": "Remember Me",
+    "es": "Recordar sesión"
+  },
+  {
+    "id": "userInfo.logOut",
+    "en": "Log Out",
+    "es": "Cerrar sesión"
+  },
+  {
+    "id": "sideBar.loading",
+    "en": "Loading...",
+    "es": "Cargando..."
+  }
+]
