@@ -2,14 +2,7 @@ import useAuth from "@/store/auth";
 import useSettings from "@/store/settings";
 import { getI18nText } from "@/utils/i18n";
 import { ApiLogOut } from "@/utils/supabase/api/auth";
-import {
-  Avatar,
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tooltip,
-} from "@heroui/react";
+import { Avatar, Button, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { LogOutIcon } from "lucide-react";
 import React from "react";
 

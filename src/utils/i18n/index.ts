@@ -1,3 +1,5 @@
+import library from "./library.json";
+
 interface I18nItem {
   [key: string]: string;
   id: string;
@@ -11,7 +13,7 @@ const defaultItem: Partial<I18nItem> = {
 };
 
 export function getI18n(id: string) {
-  const library = require("./library.json");
+  // using imported library defined at module scope
   const item = library.find((item: { id: string }) => item.id === id);
   if (!item) {
     return {

@@ -25,7 +25,7 @@ export default function SignUp() {
   const settings = useSettings();
 
   const [password, setPassword] = React.useState("");
-  const [submitted, setSubmitted] = React.useState(null as SignUpErrors | null);
+  const [submitted, setSubmitted] = React.useState<SignUpErrors | null>(null);
   const [errors, setErrors] = React.useState<SignUpErrors>({});
 
   const getPasswordError = (value: string) => {
@@ -78,8 +78,9 @@ export default function SignUp() {
 
       await ApiSignUp(payload);
       setSubmitted(payload);
-    } catch (err: any) {
-      setErrors({ email: err.message ?? "Error al registrarse" });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error al registrarse";
+      setErrors({ email: message });
     }
   };
 

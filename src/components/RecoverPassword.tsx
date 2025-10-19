@@ -2,7 +2,6 @@ import { ApiRecoverPassword } from "@/utils/supabase/api/auth";
 import emailValidator from "@/utils/validators/emailValidator";
 import {
   Button,
-  Form,
   Input,
   Link,
   Modal,

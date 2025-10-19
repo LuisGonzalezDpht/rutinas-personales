@@ -48,6 +48,9 @@ export async function ApiLogIn(
   { email, password }: UsersLogin,
   rememberMe?: boolean
 ): Promise<UserLoginResponse> {
+  if (!email || !password) {
+    throw new Error("Email and password are required");
+  }
   const supabase = createClient({
     storage: rememberMe ? "local" : "session",
     persistSession: true,
@@ -55,8 +58,8 @@ export async function ApiLogIn(
   });
 
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: email!!,
-    password: password!!,
+    email: email,
+    password: password,
   });
 
   if (error) {
@@ -74,7 +77,11 @@ export async function ApiLogIn(
 
   await supabase.auth.getSession();
 
-  const userData = await ApiGetUser(data.user.email!!);
+  const userEmail = data.user?.email;
+  if (!userEmail) {
+    throw new Error("Missing user email after login");
+  }
+  const userData = await ApiGetUser(userEmail);
 
   return {
     user: userData,
@@ -91,18 +98,20 @@ export async function ApiLogIn(
 export async function ApiSignUp(user: UsersSignUp) {
   const supabase = createClient();
 
-  const payload: any = {
-    email: user.email,
-    password: user.password,
-    options: {
-      data: {
-        username: user.username,
-        phone: user.phone,
-      },
-    },
-  };
+  const { email, password, username, phone } = user;
+  if (!email || !password) {
+    throw new Error("Email and password are required");
+  }
 
-  const { data: signUpData, error } = await supabase.auth.signUp(payload);
+  const metadata: Record<string, string> = {};
+  if (username) metadata.username = username;
+  if (phone) metadata.phone = phone;
+
+  const { data: signUpData, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: metadata },
+  });
   if (error) {
     throw error;
   }
@@ -176,7 +185,7 @@ export async function ApiRecoverPassword(
       return { message: error.message, success: false };
     }
     return { message: "Password recovery email sent", success: true };
-  } catch (error) {
+  } catch {
     return { message: "Error recovering password", success: false };
   }
 }
@@ -214,7 +223,7 @@ export async function ApiResetPassword(
       return { message: error.message, success: false };
     }
     return { message: "Password reset successfully", success: true };
-  } catch (error) {
+  } catch {
     return { message: "Error resetting password", success: false };
   }
 }

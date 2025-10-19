@@ -30,7 +30,7 @@ export default function AddExercise({
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const [exerciseName, setExerciseName] = React.useState("");
-  const [muscleGroup, setMuscleGroup] = React.useState(new Set([]));
+  const [muscleGroup, setMuscleGroup] = React.useState<Set<string>>(new Set([]));
   const [sets, setSets] = React.useState(1);
   const [reps, setReps] = React.useState(1);
   const [description, setDescription] = React.useState("");
@@ -41,6 +41,14 @@ export default function AddExercise({
     sets: "",
     reps: "",
   });
+
+  const handleMuscleGroupChange = (keys: "all" | Set<React.Key>) => {
+    if (keys === "all") {
+      setMuscleGroup(new Set([]));
+    } else {
+      setMuscleGroup(new Set(Array.from(keys).map((k) => String(k))));
+    }
+  };
 
   function validateForm() {
     let isValid = true;
@@ -138,7 +146,7 @@ export default function AddExercise({
                     className="max-w-1/2"
                     size="sm"
                     selectedKeys={muscleGroup}
-                    onSelectionChange={setMuscleGroup as any}
+                    onSelectionChange={handleMuscleGroupChange}
                     errorMessage={errors.muscleGroup}
                     isRequired
                   >

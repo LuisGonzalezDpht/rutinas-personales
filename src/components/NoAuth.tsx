@@ -2,7 +2,7 @@
 
 import useAuth from "@/store/auth";
 
-export default function noAuth({ children }: { children: React.ReactNode }) {
+export default function NoAuth({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
 
   return (

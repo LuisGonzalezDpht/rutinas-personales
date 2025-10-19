@@ -11,7 +11,7 @@ import { Button } from "@heroui/react";
 
 export default function Routines() {
   const auth = useAuth();
-  const [routines, setRoutines] = useState<any[]>([]);
+  const [routines, setRoutines] = useState<routineReponse[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function Routines() {
             <>
               {routines.map((m: routineReponse) => {
                 return (
-                  <div className="border border-neutral-700 p-5 rounded-lg flex flex-col gap-y-5 max-w-sm w-full">
+                  <div key={m.id} className="border border-neutral-700 p-5 rounded-lg flex flex-col gap-y-5 max-w-sm w-full">
                     <div className="text-white text-lg font-bold flex items-center justify-between gap-x-2">
                       <div>
                         <Calendar className="inline-block w-auto h-4 text-neutral-400" />

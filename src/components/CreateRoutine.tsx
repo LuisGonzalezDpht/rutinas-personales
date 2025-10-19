@@ -31,7 +31,7 @@ export default function CreateRoutine({
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const [routineName, setRoutineName] = React.useState("");
-  const [daySelected, setDaySelected] = React.useState(new Set(["monday"]));
+  const [daySelected, setDaySelected] = React.useState<Set<string>>(new Set(["monday"]));
   const [exercises, setExercises] = React.useState<ExercisesAdded[]>([]);
 
   const auth = useAuth();
@@ -115,7 +115,7 @@ export default function CreateRoutine({
         ExercisesList
       ) : (
         <p className="text-xs p-4">
-          No exercises added yet. Click "Add Exercise" to get started.
+          No exercises added yet. Click &quot;Add Exercise&quot; to get started.
         </p>
       )}
     </div>
@@ -165,7 +165,13 @@ export default function CreateRoutine({
                     items={daysOfWeek}
                     defaultSelectedKeys={["monday"]}
                     selectedKeys={daySelected}
-                    onSelectionChange={setDaySelected as any}
+                    onSelectionChange={(keys) => {
+                      if (keys === "all") {
+                        setDaySelected(new Set(["monday"]));
+                      } else {
+                        setDaySelected(new Set(Array.from(keys).map((k) => String(k))));
+                      }
+                    }}
                     size="sm"
                     className="max-w-1/2"
                   >
