@@ -121,7 +121,7 @@ export default function Routines() {
                                 <Delete className="w-auto h-4" />{" "}
                                 {t("routines.deleteRoutine")}
                               </Button>
-                              <Button variant="flat" color="success">
+                              <Button variant="flat" color="success" isDisabled>
                                 <Edit className="w-auto h-4" />{" "}
                                 {t("routines.editRoutine")}
                               </Button>
