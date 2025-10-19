@@ -6,8 +6,15 @@ import NoAuth from "@/components/NoAuth";
 import { RpcGetRoutines } from "@/utils/supabase/rpc/routines";
 import useAuth from "@/store/auth";
 import { routineReponse } from "@/utils/entities/routineModel";
-import { Calendar, Dumbbell, MoreVertical } from "lucide-react";
-import { Button } from "@heroui/react";
+import { Calendar, Delete, Dumbbell, Edit, MoreVertical } from "lucide-react";
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Skeleton,
+} from "@heroui/react";
+import ApiDeleteRoutine from "@/utils/supabase/api/routines";
 
 export default function Routines() {
   const auth = useAuth();
@@ -29,20 +36,60 @@ export default function Routines() {
     fetchData();
   }, [auth.sessionData?.user.id]);
 
+  function refreshRoutines() {
+    if (!auth.sessionData?.user.id) return;
+
+    const fetchData = async () => {
+      try {
+        const data = await RpcGetRoutines(
+          auth.sessionData?.user.id || "",
+          true
+        );
+        setRoutines(Array.isArray(data) ? data : []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }
+
+  function deleteRoutine(id: string) {
+    if (!auth.sessionData?.user.id) return;
+
+    const fetchData = async () => {
+      try {
+        await ApiDeleteRoutine(id);
+        refreshRoutines();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }
+
   return (
     <div>
       <HeaderPage title="Routines" subtitle="Manage your routines">
-        {auth.isAuthenticated && <CreateRoutine />}
+        {auth.isAuthenticated && <CreateRoutine onAdd={refreshRoutines} />}
       </HeaderPage>
-      <div className="w-full p-10 flex flex-wrap gap-5">
+      <div className="w-full p-5 flex flex-wrap gap-5">
         <NoAuth>
           {loading ? (
-            <div>cargando...</div>
-          ) : (
+            Array.from({ length: 8 }).map((_, idx) => (
+              <Skeleton key={idx} className="rounded-lg max-w-sm w-full">
+                <div className="max-w-sm w-full h-[170px] rounded-lg bg-default-300" />
+              </Skeleton>
+            ))
+          ) : routines.length > 0 ? (
             <>
               {routines.map((m: routineReponse) => {
                 return (
-                  <div key={m.id} className="border border-neutral-700 p-5 rounded-lg flex flex-col gap-y-5 max-w-sm w-full">
+                  <div
+                    key={m.id}
+                    className="border border-neutral-700 p-5 rounded-lg flex flex-col gap-y-5 max-w-sm w-full"
+                  >
                     <div className="text-white text-lg font-bold flex items-center justify-between gap-x-2">
                       <div>
                         <Calendar className="inline-block w-auto h-4 text-neutral-400" />
@@ -51,9 +98,27 @@ export default function Routines() {
                         </span>
                       </div>
                       <div>
-                        <Button variant="flat" isIconOnly>
-                          <MoreVertical className="w-auto h-4" />
-                        </Button>
+                        <Popover>
+                          <PopoverTrigger>
+                            <Button variant="flat" isIconOnly>
+                              <MoreVertical className="w-auto h-4" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent>
+                            <div className="flex flex-col gap-y-3">
+                              <Button
+                                variant="flat"
+                                color="danger"
+                                onPress={() => deleteRoutine(m.id)}
+                              >
+                                <Delete className="w-auto h-4" /> Borrar Rutina
+                              </Button>
+                              <Button variant="flat" color="success">
+                                <Edit className="w-auto h-4" /> Editar Rutina
+                              </Button>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </div>
                     <div className="text-white text-sm font-medium space-y-5">
@@ -71,6 +136,13 @@ export default function Routines() {
                 );
               })}
             </>
+          ) : (
+            <div className="text-center w-full p-10 bg-neutral-800 rounded-lg">
+              <p className="text-xs">
+                No routines found. Click &quot;Create Routine&quot; to get
+                started.
+              </p>
+            </div>
           )}
         </NoAuth>
       </div>

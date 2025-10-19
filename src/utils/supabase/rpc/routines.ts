@@ -37,7 +37,9 @@ export default async function RpcCreateRoutine(
 }
 
 export async function RpcGetRoutines(
-  userId: string
+  userId: string,
+  dayOfWeek: boolean | null = null,
+  filterThisWeek: boolean | null = null
 ): Promise<routineReponse[] | response> {
   const supabase = createClient();
 
@@ -45,6 +47,8 @@ export async function RpcGetRoutines(
     "get_user_routines_with_exercises",
     {
       p_user_id: userId,
+      p_order_by_day_of_week: dayOfWeek || false,
+      p_only_this_week: filterThisWeek || false,
     }
   );
 

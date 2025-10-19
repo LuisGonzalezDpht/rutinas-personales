@@ -25,13 +25,17 @@ import { toast } from "sonner";
 
 export default function CreateRoutine({
   mode = "create",
+  onAdd,
 }: {
   mode?: "create" | "edit";
+  onAdd: () => void;
 }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const [routineName, setRoutineName] = React.useState("");
-  const [daySelected, setDaySelected] = React.useState<Set<string>>(new Set(["monday"]));
+  const [daySelected, setDaySelected] = React.useState<Set<string>>(
+    new Set(["monday"])
+  );
   const [exercises, setExercises] = React.useState<ExercisesAdded[]>([]);
 
   const auth = useAuth();
@@ -67,6 +71,7 @@ export default function CreateRoutine({
     setDaySelected(new Set());
     setExercises([]);
 
+    onAdd();
     onClose();
   }
 
@@ -169,7 +174,9 @@ export default function CreateRoutine({
                       if (keys === "all") {
                         setDaySelected(new Set(["monday"]));
                       } else {
-                        setDaySelected(new Set(Array.from(keys).map((k) => String(k))));
+                        setDaySelected(
+                          new Set(Array.from(keys).map((k) => String(k)))
+                        );
                       }
                     }}
                     size="sm"

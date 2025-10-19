@@ -62,8 +62,8 @@ export default function RootLayout({
   return (
     <html lang="es" className="dark">
       <body>
-        <Toaster />
         <HeroUIProvider>
+          <Toaster position="top-center" richColors closeButton />
           <RootProvider>{children}</RootProvider>
         </HeroUIProvider>
       </body>
