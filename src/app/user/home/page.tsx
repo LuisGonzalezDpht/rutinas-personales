@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import useAuth from "@/store/auth";
 import { RpcGetRoutinesByDay } from "@/utils/supabase/rpc/routines";
 import { routineReponse } from "@/utils/entities/routineModel";
-import useGetDay from "@/composables/useGetDay";
+import getDayName from "@/composables/useGetDay";
 import { Accordion, AccordionItem, Skeleton } from "@heroui/react";
 import TrackExercise from "@/components/TrackExercise";
 
@@ -26,24 +26,24 @@ export default function Home() {
   const [routines, setRoutines] = useState<routineReponse[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     try {
       setLoading(true);
       const data = await RpcGetRoutinesByDay(
         auth.sessionData?.user.id || "",
-        useGetDay(settings)
+        getDayName(settings)
       );
       setRoutines(Array.isArray(data) ? data : []);
     } finally {
       setLoading(false);
     }
-  };
+  }, [auth.sessionData?.user.id, settings.language]);
 
   useEffect(() => {
     if (!auth.sessionData?.user.id) return;
 
     fetchData();
-  }, [auth.sessionData?.user.id]);
+  }, [auth.sessionData?.user.id, fetchData]);
 
   return (
     <div>
@@ -65,7 +65,7 @@ export default function Home() {
           ) : routines.length > 0 ? (
             <>
               <div className="w-full text-start text-lg font-bold px-5">
-                {useGetDay(settings)}
+                {getDayName(settings)}
               </div>
               <Accordion variant="splitted">
                 {routines.map((m, index) => (

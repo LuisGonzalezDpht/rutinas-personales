@@ -42,7 +42,7 @@ export default function TrackExercise({ id_routine }: { id_routine: string }) {
       setIsLoading(true);
       const res = await ApiSetTrackedRoutine(
         id_routine,
-        auth.sessionData?.user.id!! || "",
+        auth.sessionData?.user?.id || "",
         sets,
         reps,
         weight

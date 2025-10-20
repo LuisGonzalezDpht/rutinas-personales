@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Select, SelectItem, Spinner } from "@heroui/react";
 import { toast } from "sonner";
 import HeaderPage from "@/components/HeaderPage";
 import NoAuth from "@/components/NoAuth";
 import useAuth from "@/store/auth";
 import useSettings from "@/store/settings";
-import { routineReponse } from "@/utils/entities/routineModel";
+import { routineReponse, responseData } from "@/utils/entities/routineModel";
 import { getI18nText } from "@/utils/i18n";
 import {
   RpcGetRoutineChartData,
@@ -21,14 +21,14 @@ export default function Progress() {
 
   const [loading, setLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<responseData | null>(null);
   const [routines, setRoutines] = useState<routineReponse[]>([]);
   const [selectedRoutine, setSelectedRoutine] = useState<Set<string>>(
     new Set()
   );
 
   // === Obtener rutinas del usuario ===
-  const fetchDataRoutines = async () => {
+  const fetchDataRoutines = useCallback(async () => {
     try {
       setLoading(true);
       const data = await RpcGetRoutines(auth.sessionData?.user.id || "");
@@ -40,42 +40,45 @@ export default function Progress() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [auth.sessionData?.user.id]);
 
   // === Obtener datos del gráfico ===
-  const fetchDataChart = async (routineId: string) => {
-    try {
-      setChartLoading(true);
+  const fetchDataChart = useCallback(
+    async (routineId: string) => {
+      try {
+        setChartLoading(true);
 
-      const data = await RpcGetRoutineChartData(
-        auth.sessionData?.user?.id || "",
-        routineId,
-        null, // Ejercicio seleccionado (a futuro)
-        "week",
-        ["weight", "sets", "reps"]
-      );
+        const data = await RpcGetRoutineChartData(
+          auth.sessionData?.user?.id || "",
+          routineId,
+          null, // Ejercicio seleccionado (a futuro)
+          "week",
+          ["weight", "sets", "reps"]
+        );
 
-      if (!data || data.code === 500) {
-        toast.error(data?.message || t("progress.errorChart"));
-        setChartData(null);
-        return;
+        if (!data || data.code === 500) {
+          toast.error(data?.message || t("progress.errorChart"));
+          setChartData(null);
+          return;
+        }
+
+        setChartData(data);
+      } catch (err) {
+        console.error(err);
+        toast.error(t("progress.errorUnexpected"));
+      } finally {
+        setChartLoading(false);
       }
-
-      setChartData(data);
-    } catch (err) {
-      console.error(err);
-      toast.error(t("progress.errorUnexpected"));
-    } finally {
-      setChartLoading(false);
-    }
-  };
+    },
+    [auth.sessionData?.user?.id]
+  );
 
   // === Carga inicial de rutinas ===
   useEffect(() => {
     if (auth.sessionData?.user.id) {
       fetchDataRoutines();
     }
-  }, [auth.sessionData?.user.id]);
+  }, [auth.sessionData?.user.id, fetchDataRoutines]);
 
   // === Llama al gráfico al cambiar rutina seleccionada ===
   useEffect(() => {
@@ -85,7 +88,7 @@ export default function Progress() {
     } else {
       setChartData(null);
     }
-  }, [selectedRoutine]);
+  }, [selectedRoutine, fetchDataChart]);
 
   // === Render principal ===
   return (

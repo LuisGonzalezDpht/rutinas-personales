@@ -49,7 +49,7 @@ export default function RootLayout({
     if (auth.isAuthenticated && pathname === "/auth/login") {
       router.replace("/user/home");
     }
-  }, [hydrated, auth.isAuthenticated, pathname]);
+  }, [hydrated, auth.isAuthenticated, pathname, router]);
 
   // Evita parpadeo antes de hidratar Zustand
   if (!hydrated) {

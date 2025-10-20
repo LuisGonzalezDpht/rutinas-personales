@@ -21,7 +21,7 @@ export interface response {
 }
 
 export interface responseData extends response {
-  data?: any;
+  data?: unknown;
 }
 
 export interface routineReponse {

@@ -4,11 +4,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@heroui/react";
 import {
   Calendar,
-  Dumbbell,
   House,
   PanelLeftClose,
   PanelRightClose,
-  Settings,
   TrendingUp,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";

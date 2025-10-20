@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import CreateRoutine from "@/components/CreateRoutine";
 import HeaderPage from "@/components/HeaderPage";
 import NoAuth from "@/components/NoAuth";
@@ -25,19 +25,19 @@ export default function Routines() {
   const settings = useSettings();
   const t = (key: string) => getI18nText(key, settings.language);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const data = await RpcGetRoutines(auth.sessionData?.user.id || "", true);
       setRoutines(Array.isArray(data) ? data : []);
     } finally {
       setLoading(false);
     }
-  };
+  }, [auth.sessionData?.user.id]);
 
   useEffect(() => {
-    if (!auth.sessionData?.user.id) return;
+     if (!auth.sessionData?.user.id) return;
     fetchData();
-  }, [auth.sessionData?.user.id]);
+  }, [auth.sessionData?.user.id, fetchData]);
 
   function refreshRoutines() {
     if (!auth.sessionData?.user.id) return;

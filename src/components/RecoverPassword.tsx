@@ -87,7 +87,8 @@ export default function RecoverPassword() {
                   isLoading={loading}
                   className="w-full"
                 >
-                  {t("recoverPassword.action")} <Send className="inline-block w-4 h-4 ml-2" />
+                  {t("recoverPassword.action")}{" "}
+                  <Send className="inline-block w-4 h-4 ml-2" />
                 </Button>
               </ModalFooter>
             </>
