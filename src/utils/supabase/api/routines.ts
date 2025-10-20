@@ -20,7 +20,8 @@ export async function ApiDeleteRoutine(idRoutine: string): Promise<response> {
 }
 
 export async function ApiSetTrackedRoutine(
-  routineTrackedId: string,
+  p_routine_id: string,
+  p_user_id: string,
   sets: number,
   reps: number,
   weight: number
@@ -28,7 +29,8 @@ export async function ApiSetTrackedRoutine(
   const supabase = createClient();
 
   const { error } = await supabase.rpc("set_tracked_exercise", {
-    p_routine_tracked_id: routineTrackedId,
+    p_routine_id: p_routine_id,
+    p_user_id: p_user_id,
     p_sets: sets,
     p_reps: reps,
     p_weight: weight,

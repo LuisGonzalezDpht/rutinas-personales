@@ -1,5 +1,6 @@
 "use client";
 
+import useAuth from "@/store/auth";
 import { ApiSetTrackedRoutine } from "@/utils/supabase/api/routines";
 import {
   Button,
@@ -15,6 +16,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function TrackExercise({ id_routine }: { id_routine: string }) {
+  const auth = useAuth();
+
   const [sets, setSets] = useState<number>(1);
   const [reps, setReps] = useState<number>(1);
   const [weight, setWeight] = useState<number>(0);
@@ -30,14 +33,20 @@ export default function TrackExercise({ id_routine }: { id_routine: string }) {
       return;
     }
 
-    if (sets <= 1 || reps <= 1 || weight < 0) {
+    if (weight < 0) {
       toast.error("Values must be greater than 0");
       return;
     }
 
     try {
       setIsLoading(true);
-      const res = await ApiSetTrackedRoutine(id_routine, sets, reps, weight);
+      const res = await ApiSetTrackedRoutine(
+        id_routine,
+        auth.sessionData?.user.id!! || "",
+        sets,
+        reps,
+        weight
+      );
 
       if (res?.code === 200) {
         toast.success("Exercise tracked successfully");
