@@ -28,6 +28,7 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const data = await RpcGetRoutinesByDay(
         auth.sessionData?.user.id || "",
         useGetDay(settings)

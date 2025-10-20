@@ -18,7 +18,7 @@ import React from "react";
 import AddExercise from "./AddExercise";
 import { ExercisesAdded } from "@/shared/types/ExercisesAdded";
 import { routineRequest } from "@/utils/entities/routineModel";
-import RpcCreateRoutine from "@/utils/supabase/rpc/routines";
+import { RpcCreateRoutine } from "@/utils/supabase/rpc/routines";
 import ApiGetUser from "@/utils/supabase/api/user";
 import useAuth from "@/store/auth";
 import { toast } from "sonner";

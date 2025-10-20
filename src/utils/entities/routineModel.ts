@@ -20,6 +20,10 @@ export interface response {
   message: string;
 }
 
+export interface responseData extends response {
+  data?: any;
+}
+
 export interface routineReponse {
   id: string;
   name: string;

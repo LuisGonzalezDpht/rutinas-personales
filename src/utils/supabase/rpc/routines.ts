@@ -2,11 +2,11 @@ import {
   routineRequest,
   response,
   routineReponse,
+  responseData,
 } from "@/utils/entities/routineModel";
 import { createClient } from "../client";
-import useGetDay from "@/composables/useGetDay";
 
-export default async function RpcCreateRoutine(
+export async function RpcCreateRoutine(
   routine: routineRequest
 ): Promise<response> {
   const supabase = createClient();
@@ -83,6 +83,35 @@ export async function RpcGetRoutinesByDay(
   const errorMessage = {
     code: 500,
     message: error?.message || "Error al obtener las rutinas",
+  };
+
+  if (error) {
+    return errorMessage;
+  }
+
+  return data;
+}
+
+export async function RpcGetRoutineChartData(
+  p_user_id: string,
+  p_routine_id: string,
+  p_exercise_id: string | null,
+  p_range: string,
+  p_metrics: string[]
+): Promise<responseData> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.rpc("get_routine_chart_data", {
+    p_user_id: p_user_id,
+    p_routine_id: p_routine_id,
+    p_exercise_id: p_exercise_id,
+    p_range: p_range,
+    p_metrics: p_metrics,
+  });
+
+  const errorMessage = {
+    code: 500,
+    message: error?.message || "Error al obtener los datos de la rutina",
   };
 
   if (error) {
