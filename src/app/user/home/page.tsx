@@ -30,7 +30,7 @@ export default function Home() {
     try {
       const data = await RpcGetRoutinesByDay(
         auth.sessionData?.user.id || "",
-        "tuesday" // useGetDay(settings)
+        useGetDay(settings)
       );
       setRoutines(Array.isArray(data) ? data : []);
     } finally {
@@ -43,11 +43,6 @@ export default function Home() {
 
     fetchData();
   }, [auth.sessionData?.user.id]);
-
-  function refreshRoutines() {
-    if (!auth.sessionData?.user.id) return;
-    fetchData();
-  }
 
   return (
     <div>
