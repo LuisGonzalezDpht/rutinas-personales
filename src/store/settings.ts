@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-type settingsState = {
+export type settingsState = {
   language: string;
   setLanguage: (language: string) => void;
   sidebarExpand: boolean;

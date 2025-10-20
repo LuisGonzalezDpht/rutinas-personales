@@ -4,6 +4,7 @@ import {
   routineReponse,
 } from "@/utils/entities/routineModel";
 import { createClient } from "../client";
+import useGetDay from "@/composables/useGetDay";
 
 export default async function RpcCreateRoutine(
   routine: routineRequest
@@ -49,6 +50,33 @@ export async function RpcGetRoutines(
       p_user_id: userId,
       p_order_by_day_of_week: dayOfWeek || false,
       p_only_this_week: filterThisWeek || false,
+    }
+  );
+
+  const errorMessage = {
+    code: 500,
+    message: error?.message || "Error al obtener las rutinas",
+  };
+
+  if (error) {
+    return errorMessage;
+  }
+
+  return data;
+}
+
+export async function RpcGetRoutinesByDay(
+  userId: string,
+  dayOfWeek: string
+): Promise<routineReponse[] | response> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.rpc(
+    "get_user_routines_with_exercises_with_filter",
+    {
+      p_user_id: userId,
+      p_key: "day_of_week",
+      p_value: dayOfWeek,
     }
   );
 

@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
   Skeleton,
 } from "@heroui/react";
-import ApiDeleteRoutine from "@/utils/supabase/api/routines";
+import { ApiDeleteRoutine } from "@/utils/supabase/api/routines";
 import useSettings from "@/store/settings";
 import { getI18nText } from "@/utils/i18n";
 
@@ -25,36 +25,22 @@ export default function Routines() {
   const settings = useSettings();
   const t = (key: string) => getI18nText(key, settings.language);
 
+  const fetchData = async () => {
+    try {
+      const data = await RpcGetRoutines(auth.sessionData?.user.id || "", true);
+      setRoutines(Array.isArray(data) ? data : []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!auth.sessionData?.user.id) return;
-
-    const fetchData = async () => {
-      try {
-        const data = await RpcGetRoutines(auth.sessionData?.user.id || "");
-        setRoutines(Array.isArray(data) ? data : []);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, [auth.sessionData?.user.id]);
 
   function refreshRoutines() {
     if (!auth.sessionData?.user.id) return;
-
-    const fetchData = async () => {
-      try {
-        const data = await RpcGetRoutines(
-          auth.sessionData?.user.id || "",
-          true
-        );
-        setRoutines(Array.isArray(data) ? data : []);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }
 
