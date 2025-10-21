@@ -5,7 +5,6 @@ import {
   responseData,
 } from "@/utils/entities/routineModel";
 import { createClient } from "../client";
-import { LineData } from "lightweight-charts";
 
 export async function RpcCreateRoutine(
   routine: routineRequest

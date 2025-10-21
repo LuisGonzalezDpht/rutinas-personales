@@ -37,7 +37,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [auth.sessionData?.user.id, settings.language]);
+  }, [auth.sessionData?.user.id, settings]);
 
   useEffect(() => {
     if (!auth.sessionData?.user.id) return;

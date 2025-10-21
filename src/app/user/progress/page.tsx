@@ -24,7 +24,7 @@ import Chart, { ChartSeries } from "@/components/Chart";
 export default function Progress() {
   const auth = useAuth();
   const settings = useSettings();
-  const t = (key: string) => getI18nText(key, settings.language);
+  const t = useCallback((key: string) => getI18nText(key, settings.language), [settings.language]);
 
   const [loading, setLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
@@ -59,7 +59,7 @@ export default function Progress() {
     } finally {
       setLoading(false);
     }
-  }, [auth.sessionData?.user.id]);
+  }, [auth.sessionData?.user?.id, t]);
 
   // === Obtener datos del gráfico ===
   const fetchDataChart = useCallback(
@@ -106,7 +106,7 @@ export default function Progress() {
                 : metric === "sets"
                 ? "#FF7043"
                 : "#9C27B0",
-            data: res.data,
+            data: res.data as ChartSeries["data"],
           };
         });
 
@@ -118,7 +118,7 @@ export default function Progress() {
         setChartLoading(false);
       }
     },
-    [metrics, range, auth.sessionData?.user?.id]
+    [metrics, range, t]
   );
 
   // === Carga inicial de rutinas ===
