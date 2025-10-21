@@ -5,6 +5,7 @@ import {
   responseData,
 } from "@/utils/entities/routineModel";
 import { createClient } from "../client";
+import { LineData } from "lightweight-charts";
 
 export async function RpcCreateRoutine(
   routine: routineRequest
@@ -93,20 +94,16 @@ export async function RpcGetRoutinesByDay(
 }
 
 export async function RpcGetRoutineChartData(
-  p_user_id: string,
   p_routine_id: string,
-  p_exercise_id: string | null,
-  p_range: string,
-  p_metrics: string[]
+  p_metric: string,
+  p_range: string
 ): Promise<responseData> {
   const supabase = createClient();
 
-  const { data, error } = await supabase.rpc("get_routine_chart_data", {
-    p_user_id: p_user_id,
+  const { data, error } = await supabase.rpc("get_user_metric_series", {
     p_routine_id: p_routine_id,
-    p_exercise_id: p_exercise_id,
+    p_metric: p_metric,
     p_range: p_range,
-    p_metrics: p_metrics,
   });
 
   const errorMessage = {
@@ -118,5 +115,9 @@ export async function RpcGetRoutineChartData(
     return errorMessage;
   }
 
-  return data;
+  return {
+    code: 200,
+    message: "Datos de la rutina obtenidos con éxito",
+    data: data,
+  };
 }

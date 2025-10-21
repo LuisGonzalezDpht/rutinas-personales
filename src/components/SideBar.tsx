@@ -96,7 +96,7 @@ export default function SideBar() {
 
   const sidebarClass = `
     ${settings.sidebarExpand ? (isMobile ? "w-full" : "w-64") : "w-16"}
-    bg-neutral-900 border-r border-r-neutral-700 h-screen flex flex-col justify-between
+    border-r border-r-neutral-700 h-screen flex flex-col justify-between
     transition-[width] duration-300 ease-in-out
   `;
 
@@ -131,7 +131,7 @@ export default function SideBar() {
                   settings.sidebarExpand ? "justify-start" : "justify-center"
                 }`}
                 color={item.to === pathname ? "warning" : "default"}
-                variant="faded"
+                variant="light"
                 size="sm"
                 isIconOnly={!settings.sidebarExpand}
                 onPress={() => goto(item.to)}
